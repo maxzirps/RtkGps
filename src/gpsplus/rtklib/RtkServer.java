@@ -1,5 +1,7 @@
 package gpsplus.rtklib;
 
+import android.util.Log;
+
 import gpsplus.rtkgps.MainActivity;
 import proguard.annotation.Keep;
 
@@ -9,7 +11,7 @@ import javax.annotation.Nonnull;
 
 
 public class RtkServer {
-
+    static final String TAG = RtkServer.class.getSimpleName();
     /* mObject is used by native code, do not remove or rename */
     @Keep
     private long mObject;
@@ -38,6 +40,7 @@ public class RtkServer {
     }
 
     public boolean start() {
+        Log.v(TAG, "Rtkserver started");
         final boolean started;
 
         started = _rtksvrstart(
@@ -62,6 +65,7 @@ public class RtkServer {
     }
 
     public void stop() {
+        Log.v(TAG, "Rtkserver stopped");
         _stop(mSettings.getInputStreamCommandsAtShutdown());
         mStatus = RtkServerStreamStatus.STATE_CLOSE;
     }
@@ -81,7 +85,8 @@ public class RtkServer {
     }
 
     public RtkServerObservationStatus getRoverObservationStatus(RtkServerObservationStatus status) {
-        return getObservationStatus(RtkServer.RECEIVER_ROVER, status);
+        RtkServerObservationStatus roverStatus = getObservationStatus(RtkServer.RECEIVER_ROVER, status);
+        return roverStatus;
     }
 
     public RtkServerObservationStatus getEphemObservationStatus(RtkServerObservationStatus status) {

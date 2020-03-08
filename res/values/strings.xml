@@ -214,6 +214,7 @@
     <string name="str_unixsvr">Unix domain socket server</string>
     <string name="str_bluetooth">Bluetooth</string>
     <string name="str_mobilemapper">MobileMapper 50 internal</string>
+    <string name="str_rawgnss">RawGNSS</string>
     <string name="str_usb">USB</string>
 
     <!-- IONOOPT_XXX Ionosphere option -->
@@ -703,6 +704,9 @@
 
     <!-- File stream preferences -->
     <string name="file_dialog_title">File settings</string>
+
+    <!-- RawGNSS stream preferences -->
+    <string name="rawgnss_dialog_title">RawGNSS settings</string>
     
     <!-- Bluetooth stream preferences -->
     <string name="bluetooth_dialog_title">Bluetooth receiver settings</string>

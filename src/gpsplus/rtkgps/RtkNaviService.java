@@ -46,6 +46,7 @@ import gpsplus.rtkgps.settings.SolutionOutputSettingsFragment;
 import gpsplus.rtkgps.settings.StreamBluetoothFragment;
 import gpsplus.rtkgps.settings.StreamBluetoothFragment.Value;
 import gpsplus.rtkgps.settings.StreamMobileMapperFragment;
+import gpsplus.rtkgps.settings.StreamRawGNSSClientFragment;
 import gpsplus.rtkgps.settings.StreamUsbFragment;
 import gpsplus.rtkgps.utils.GpsTime;
 import gpsplus.rtkgps.utils.PreciseEphemerisDownloader;
@@ -143,6 +144,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
     private PowerManager.WakeLock mCpuLock;
 
     private BluetoothToRtklib mBtRover, mBtBase;
+    private RawGNSSToRtklib rawRover;
     private UsbToRtklib mUsbReceiver;
     private MobileMapperToRtklib mMobileMapperToRtklib;
     private boolean mBoolIsRunning = false;
@@ -222,6 +224,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
         if (MainActivity.getDemoModeLocation().isInDemoMode() && mbStarted) {
             return MainActivity.getDemoModeLocation().getObservationStatus(status);
         } else {
+            // fills the graph
             return mRtkServer.getRoverObservationStatus(status);
         }
     }
@@ -385,6 +388,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
 
         startBluetoothPipes();
         startUsb();
+        startRawGNSS();
         startMobileMapper();
 
         mCpuLock.acquire();
@@ -615,6 +619,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
 
             stopBluetoothPipes();
             stopUsb();
+            stopRawGNSS();
             stopMobileMapper();
             // Tell the user we stopped.
             Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT)
@@ -828,6 +833,95 @@ public class RtkNaviService extends IntentService implements LocationListener {
         if (mUsbReceiver != null) {
             mUsbReceiver.stop();
             mUsbReceiver = null;
+        }
+    }
+
+    private class RawCallbacks implements RawGNSSToRtklib.Callbacks {
+
+        private int mStreamId;
+        private final Handler mHandler;
+
+        public RawCallbacks(int streamId) {
+            mStreamId = streamId;
+            mHandler = new Handler();
+        }
+
+        @Override
+        public void onConnected() {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(RtkNaviService.this, "Rawgnss started",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            new Thread() {
+                @Override
+                public void run() {
+                    mRtkServer.sendStartupCommands(mStreamId);
+                }
+            }.run();
+
+        }
+
+        @Override
+        public void onStopped() {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(RtkNaviService.this, "Rawgnss stopped",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        @Override
+        public void onConnectionLost() {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(RtkNaviService.this, "Rawgnss stopped",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    }
+
+
+    private void startRawGNSS() {
+        RtkServerSettings settings = mRtkServer.getServerSettings();
+
+        {
+            final TransportSettings roverSettings;
+            roverSettings = settings.getInputRover().getTransportSettings();
+            if (roverSettings.getType() == StreamType.RAWGNSS) {
+                Log.v(TAG, "RAWGNSS Rover-Type selected");
+                StreamRawGNSSClientFragment.Value rawSettings = (gpsplus.rtkgps.settings.StreamRawGNSSClientFragment.Value)roverSettings;
+                rawRover = new RawGNSSToRtklib(this, rawSettings.getPath());
+                rawRover.setCallbacks(new RawCallbacks(RtkServer.RECEIVER_ROVER));
+                rawRover.start();
+                return;
+            }
+        }
+
+        {
+            final TransportSettings baseSettings;
+            baseSettings = settings.getInputBase().getTransportSettings();
+            if (baseSettings.getType() == StreamType.RAWGNSS) {
+                Log.v(TAG, "RAWGNSS Base-Type selected");
+                // This will never happen, since our phone is only used as a rover
+                return;
+            }
+        }
+    }
+
+    private void stopRawGNSS() {
+        Log.v(TAG, "RAWGNSS stopped");
+        if (rawRover != null) {
+            rawRover.stop();
+            rawRover = null;
         }
     }
 

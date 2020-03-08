@@ -353,6 +353,9 @@ public class SettingsHelper {
         case USB:
             settings = StreamUsbFragment.readSettings(context, prefs, stream);
             break;
+            case RAWGNSS:
+                settings = StreamRawGNSSClientFragment.readSettings(context, prefs, stream);
+                break;
         case NONE:
             settings = RtkServerSettings.TRANSPORT_DUMMY;
             break;
@@ -399,6 +402,9 @@ public class SettingsHelper {
         case TCPCLI:
             summary = StreamTcpClientFragment.readSummary(prefs);
             break;
+            case RAWGNSS:
+                summary = StreamRawGNSSClientFragment.readSummary(prefs);
+                break;
         case UDPCLI:
             summary = StreamUdpClientFragment.readSummary(prefs);
             break;

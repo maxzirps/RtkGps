@@ -75,6 +75,10 @@ public class StreamDialogActivity extends Activity {
             fragment = new StreamMobileMapperFragment();
             title = R.string.mobilemapper_dialog_title;
             break;
+            case RAWGNSS:
+                fragment = new StreamRawGNSSClientFragment();
+                title = R.string.rawgnss_dialog_title;
+                break;
         case TCPSVR:
             // TODO
             fragment = new StreamNtripClientFragment();

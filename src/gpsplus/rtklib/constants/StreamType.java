@@ -49,6 +49,9 @@ public enum StreamType implements IHasRtklibId {
     // XXX
     MOBILEMAPPER(15, R.string.str_mobilemapper),
 
+    // Raw GNSS data from phone internal
+    RAWGNSS(15, R.string.str_rawgnss)
+
     ;
 
     private final int mRtklibId;
