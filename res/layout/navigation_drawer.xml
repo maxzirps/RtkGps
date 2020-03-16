@@ -35,12 +35,6 @@
     	        android:onClick="onNavDrawevItemClicked" />
     		
 			<TextView
-    	        style="@style/NavigationDrawerItem"
-    	        android:id="@+id/navdraw_item_map"
-    	        android:text="@string/navdraw_item_map"
-    	        android:onClick="onNavDrawevItemClicked" />
-
-			<TextView
 				android:id="@+id/navdraw_item_routing"
 				style="@style/NavigationDrawerItem"
 				android:layout_width="match_parent"
