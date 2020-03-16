@@ -11,6 +11,10 @@ import android.view.ViewGroup;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.compass.CompassOverlay;
+import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +33,7 @@ public class RoutingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_routing, container, false);
-
+        ButterKnife.bind(this, v);
         //handle permissions first, before map is created. not depicted here
 
         //load/initialize the osmdroid configuration, this can be done
@@ -40,8 +44,14 @@ public class RoutingFragment extends Fragment {
         //if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
         //see also StorageUtils
         //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
+        MyLocationNewOverlay mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),map);
+        mLocationOverlay.enableMyLocation();
+        map.getOverlays().add(mLocationOverlay);
 
-        ButterKnife.bind(this, v);
+        CompassOverlay mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), map);
+        mCompassOverlay.enableCompass();
+        map.getOverlays().add(mCompassOverlay);
+
         map.setTileSource(TileSourceFactory.MAPNIK);
         return v;
     }
