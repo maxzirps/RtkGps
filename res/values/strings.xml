@@ -46,6 +46,7 @@
     <string name="navdraw_ntripcaster_server_switch">NTRIP Caster</string>
     <string name="navdraw_item_status">Status</string>
     <string name="navdraw_item_map">Map</string>
+    <string name="navdraw_item_routing">Routing</string>
 	<string name="navdraw_item_input_streams">Input streams</string>
     <string name="navdraw_item_output_streams">Output streams</string>
     <string name="navdraw_item_log_streams">Log streams</string>

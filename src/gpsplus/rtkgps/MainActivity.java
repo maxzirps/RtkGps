@@ -459,6 +459,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
 
     private void selectDrawerItem(int itemId) {
         switch (itemId) {
+            case R.id.navdraw_item_routing:
         case R.id.navdraw_item_status:
         case R.id.navdraw_item_map:
             setNavDrawerItemFragment(itemId);
@@ -497,6 +498,9 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         case R.id.navdraw_item_map:
             fragment = new MapFragment();
             break;
+            case R.id.navdraw_item_routing:
+                fragment = new RoutingFragment();
+                break;
         default:
             throw new IllegalArgumentException();
         }
