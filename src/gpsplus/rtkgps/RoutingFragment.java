@@ -2,17 +2,22 @@ package gpsplus.rtkgps;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -46,11 +51,32 @@ public class RoutingFragment extends Fragment {
         //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
         MyLocationNewOverlay mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),map);
         mLocationOverlay.enableMyLocation();
+        mLocationOverlay.enableFollowLocation();
+        // load a bitmap from the drawable folder
+        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.cursor);
+
+        Bitmap scaled = Bitmap.createScaledBitmap(b, 48, 48, false);
+        mLocationOverlay.setPersonIcon(scaled);
+        IMapController mapController = map.getController();
+        mapController.setZoom(18);
+        mapController.setCenter(mLocationOverlay.getMyLocation());
         map.getOverlays().add(mLocationOverlay);
 
         CompassOverlay mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), map);
         mCompassOverlay.enableCompass();
         map.getOverlays().add(mCompassOverlay);
+
+
+        RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(ctx, map);
+        mRotationGestureOverlay.setEnabled(true);
+        map.setMultiTouchControls(true);
+        map.getOverlays().add(mRotationGestureOverlay);
+
+        //needed for pinch zooms
+        map.setMultiTouchControls(true);
+
+        //scales tiles to the current screen's DPI, helps with readability of labels
+        map.setTilesScaledToDpi(true);
 
         map.setTileSource(TileSourceFactory.MAPNIK);
         return v;
@@ -62,7 +88,7 @@ public class RoutingFragment extends Fragment {
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-        // map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
+         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
     }
 
     public void onPause(){
@@ -71,6 +97,6 @@ public class RoutingFragment extends Fragment {
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
-        // map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
+         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
     }
 }
