@@ -6,16 +6,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +20,11 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer;
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -66,6 +61,8 @@ public class RoutingFragment extends Fragment {
     private MapView mMapView;
     @BindView(R.id.map_container) ViewGroup mMapViewContainer;
     @BindView(R.id.compass_container) ViewGroup mCompassContainer;
+    private Polyline drivenPath;
+    private Boolean followPosition;
 
     private MyLocationNewOverlay mLocationOverlay;
     private CompassOverlay mCompassOverlay;
@@ -84,6 +81,7 @@ public class RoutingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        followPosition = false;
         mMapView = new MapView(inflater.getContext());
         View v = inflater.inflate(R.layout.fragment_routing, container, false);
         ButterKnife.bind(this, v);
@@ -105,39 +103,25 @@ public class RoutingFragment extends Fragment {
 
         Bitmap scaled = Bitmap.createScaledBitmap(b, 48, 48, true);
         mLocationOverlay.setPersonIcon(scaled);
-        IMapController mapController = mMapView.getController();
-        mapController.setZoom(14);
-        mapController.setCenter(mLocationOverlay.getMyLocation());
+
         mMapView.getOverlays().add(mLocationOverlay);
         mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), mMapView);
         mCompassOverlay.enableCompass();
         mMapView.getOverlays().add(mCompassOverlay);
 
-        //needed for pinch zooms
+        mMapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         mMapView.setMultiTouchControls(true);
 
         //scales tiles to the current screen's DPI, helps with readability of labels
         mMapView.setTilesScaledToDpi(true);
 
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
-
-        Polyline line = new Polyline();   //see note below!
-        List<GeoPoint> pts = new ArrayList<>();
+drivenPath = new Polyline();
 
 
-        pts.add(new GeoPoint(48.08609227831706,16.284162998199463
-                ));
-        pts.add(new GeoPoint( 48.087195985118406,       16.28396987915039
-                ));
-        pts.add(new GeoPoint( 48.08835700177577,       16.283755302429
-                ));
-        pts.add(new GeoPoint( 48.08950365916834,       16.28339052200317
-                ));
-        pts.add(new GeoPoint( 48.091209264740755,       16.28349781036377
-                ));
-        line.setPoints(pts);
-        line.setColor(Color.RED);
-        mMapView.getOverlays().add(line);
+        drivenPath.getOutlinePaint().setColor(Color.GREEN);
+        drivenPath.getOutlinePaint().setStrokeWidth(3);
+        mMapView.getOverlays().add(drivenPath);
 
         mMapViewContainer.addView(mMapView, 0);
 
@@ -178,6 +162,7 @@ public class RoutingFragment extends Fragment {
                         @Override
                         public void run() {
                             RoutingFragment.this.updateStatus();
+                            RoutingFragment.this.drawDrivenRoute(mMyLocationProvider);
                         }
                     };
                     @Override
@@ -219,6 +204,15 @@ public class RoutingFragment extends Fragment {
         mCompassOverlay.disableCompass();
     }
 
+
+    void drawDrivenRoute( MyLocationProvider mMyLocationProvider ){
+        Location lastKnownLocation = mMyLocationProvider.getLastKnownLocation();
+        if (lastKnownLocation!= null) {
+            drivenPath.addPoint(new GeoPoint(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude()
+            ));
+        }
+    }
+
     void updateStatus() {
         MainActivity ma;
         RtkNaviService rtks;
@@ -241,6 +235,13 @@ public class RoutingFragment extends Fragment {
             mMyLocationProvider.setStatus(mRtkStatus, !mMapView.isAnimating());
             mGTimeView.setTime(mRtkStatus.getSolution().getTime());
             mSolutionView.setStats(mRtkStatus);
+            if (!followPosition){
+                // Set Zoom on
+                IMapController mapController = mMapView.getController();
+                mapController.setZoom(14);
+                mapController.setCenter(mLocationOverlay.getMyLocation());
+            }
+
         }
 
         assertNotNull(mStreamStatus.mMsg);
