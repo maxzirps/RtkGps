@@ -10,12 +10,22 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -29,6 +39,11 @@ import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer;
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -59,9 +74,12 @@ public class RoutingFragment extends Fragment {
     SolutionView mSolutionView;
     private RtkServerStreamStatus mStreamStatus;
     private MapView mMapView;
-    @BindView(R.id.map_container) ViewGroup mMapViewContainer;
-    @BindView(R.id.compass_container) ViewGroup mCompassContainer;
+    @BindView(R.id.map_container)
+    ViewGroup mMapViewContainer;
+    @BindView(R.id.compass_container)
+    ViewGroup mCompassContainer;
     private Polyline drivenPath;
+    private Polyline loadedPath;
     private Boolean followPosition;
 
     private MyLocationNewOverlay mLocationOverlay;
@@ -72,10 +90,102 @@ public class RoutingFragment extends Fragment {
         mRtkStatus = new RtkControlResult();
     }
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_routing, menu);
+    }
+
+    private void clearPaths() {
+        if (drivenPath != null) drivenPath.setPoints(new ArrayList<GeoPoint>());
+        if (loadedPath != null) loadedPath.setPoints(new ArrayList<GeoPoint>());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.menu_load_path:
+                loadPath();
+                break;
+            case R.id.menu_clear_paths:
+                clearPaths();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+    }
+
+    private ArrayList<GeoPoint> loadPath() {
+        FileChooser fileChooser = new FileChooser(getActivity());
+
+        fileChooser.setFileListener(new FileChooser.FileSelectedListener() {
+            @Override
+            public void fileSelected(final File file) {
+                String filename = file.getAbsolutePath();
+                Log.i("File Name", filename);
+                StringBuilder content = new StringBuilder();
+                BufferedReader br = null;
+                try {
+                    br = new BufferedReader(new FileReader(file));
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        content.append(line);
+                        content.append('\n');
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                } finally {
+                    if (br != null) {
+                        try {
+                            br.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    ;
+                }
+                addPathToMap(content.toString());
+
+            }
+        });
+
+        fileChooser.setExtension("json");
+        fileChooser.showDialog();
+        return new ArrayList<GeoPoint>();
+    }
+
+    private void addPathToMap(String text) {
+        JSONArray array;
+        ArrayList<GeoPoint> path = new ArrayList<>();
+        try {
+            array = new JSONObject(text).getJSONArray("coordinates");
+            for (int i = 0; i < array.length(); i++) {
+                path.add(new GeoPoint(array.getJSONArray(i).getDouble(1), array.getJSONArray(i).getDouble(0)));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.v(TAG, path.toString());
+        if (path.size() == 0) {
+            Toast.makeText(getActivity(), "Error reading path file",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            loadedPath = new Polyline();
+            loadedPath.setPoints(path);
+            loadedPath.getOutlinePaint().setColor(Color.rgb(255, 132, 0));
+            loadedPath.getOutlinePaint().setStrokeWidth(2);
+            mMapView.getOverlays().add(loadedPath);
+        }
     }
 
     @Override
@@ -95,7 +205,7 @@ public class RoutingFragment extends Fragment {
         //if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
         //see also StorageUtils
         //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
-        this.mLocationOverlay = new MyLocationNewOverlay(mMyLocationProvider,mMapView);
+        this.mLocationOverlay = new MyLocationNewOverlay(mMyLocationProvider, mMapView);
         mLocationOverlay.enableMyLocation();
         mLocationOverlay.enableFollowLocation();
         // load a bitmap from the drawable folder
@@ -116,7 +226,7 @@ public class RoutingFragment extends Fragment {
         mMapView.setTilesScaledToDpi(true);
 
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
-drivenPath = new Polyline();
+        drivenPath = new Polyline();
 
 
         drivenPath.getOutlinePaint().setColor(Color.GREEN);
@@ -140,7 +250,7 @@ drivenPath = new Polyline();
                         // measure your views here
                         final Rect rect = mMapView.getProjection().getScreenRect();
 
-                        mCompassOverlay.setCompassCenter(rect.width()/3 - 30, rect.height()/3 - 30);
+                        mCompassOverlay.setCompassCenter(rect.width() / 3 - 30, rect.height() / 3 - 30);
 
                     }
                 }
@@ -165,6 +275,7 @@ drivenPath = new Polyline();
                             RoutingFragment.this.drawDrivenRoute(mMyLocationProvider);
                         }
                     };
+
                     @Override
                     public void run() {
                         Activity a = getActivity();
@@ -178,7 +289,7 @@ drivenPath = new Polyline();
     @Override
     public void onResume() {
         super.onResume();
-      //  loadMapPreferences();
+        //  loadMapPreferences();
         mLocationOverlay.enableMyLocation(mMyLocationProvider);
         mLocationOverlay.enableFollowLocation();
         mCompassOverlay.enableCompass(this.mCompassOverlay.getOrientationProvider());
@@ -192,24 +303,32 @@ drivenPath = new Polyline();
         mStreamStatusUpdateTimer = null;
     }
 
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         mMapView.onPause();  //needed for compass, my location overlays, v6.0.0 and up
-       // saveMapPreferences();
+        // saveMapPreferences();
         mLocationOverlay.disableMyLocation();
         mCompassOverlay.disableCompass();
     }
 
 
-    void drawDrivenRoute( MyLocationProvider mMyLocationProvider ){
+    void drawDrivenRoute(MyLocationProvider mMyLocationProvider) {
         Location lastKnownLocation = mMyLocationProvider.getLastKnownLocation();
-        if (lastKnownLocation!= null) {
-            drivenPath.addPoint(new GeoPoint(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude()
-            ));
+        if (lastKnownLocation != null) {
+            drivenPath.addPoint(new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
+            if (!followPosition) {
+                // Set Zoom on position found
+                IMapController mapController = mMapView.getController();
+                mapController.setZoom(14.0);
+                mapController.setCenter(mLocationOverlay.getMyLocation());
+                followPosition = true;
+
+            }
+
         }
     }
 
@@ -219,7 +338,7 @@ drivenPath = new Polyline();
         int serverStatus;
 
         // XXX
-        ma = (MainActivity)getActivity();
+        ma = (MainActivity) getActivity();
 
         if (ma == null) return;
 
@@ -227,7 +346,7 @@ drivenPath = new Polyline();
         if (rtks == null) {
             serverStatus = RtkServerStreamStatus.STATE_CLOSE;
             mStreamStatus.clear();
-        }else {
+        } else {
             rtks.getStreamStatus(mStreamStatus);
             rtks.getRtkStatus(mRtkStatus);
             serverStatus = rtks.getServerStatus();
@@ -235,12 +354,7 @@ drivenPath = new Polyline();
             mMyLocationProvider.setStatus(mRtkStatus, !mMapView.isAnimating());
             mGTimeView.setTime(mRtkStatus.getSolution().getTime());
             mSolutionView.setStats(mRtkStatus);
-            if (!followPosition){
-                // Set Zoom on
-                IMapController mapController = mMapView.getController();
-                mapController.setZoom(14);
-                mapController.setCenter(mLocationOverlay.getMyLocation());
-            }
+
 
         }
 
@@ -248,6 +362,7 @@ drivenPath = new Polyline();
 
         mStreamIndicatorsView.setStats(mStreamStatus, serverStatus);
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -258,6 +373,7 @@ drivenPath = new Polyline();
     }
 
     MyLocationProvider mMyLocationProvider = new MyLocationProvider();
+
     static class MyLocationProvider implements IMyLocationProvider {
 
         private Location mLastLocation = new Location("");
@@ -289,10 +405,10 @@ drivenPath = new Polyline();
         private void setSolution(Solution s, boolean notifyConsumer) {
             RtkCommon.Position3d pos;
             if (MainActivity.getDemoModeLocation().isInDemoMode() && RtkNaviService.mbStarted) {
-                pos=MainActivity.getDemoModeLocation().getPosition();
+                pos = MainActivity.getDemoModeLocation().getPosition();
                 if (pos == null)
                     return;
-            }else{
+            } else {
                 if (s.getSolutionStatus() == SolutionStatus.NONE) {
                     return;
                 }
@@ -309,9 +425,9 @@ drivenPath = new Polyline();
             if (mConsumer != null) {
                 if (notifyConsumer) {
                     mConsumer.onLocationChanged(mLastLocation, this);
-                }else {
+                } else {
                     // XXX
-                   // if (DBG) Log.v(TAG, "onLocationChanged() skipped while animating");
+                    // if (DBG) Log.v(TAG, "onLocationChanged() skipped while animating");
                 }
             }
         }
@@ -320,6 +436,8 @@ drivenPath = new Polyline();
             setSolution(status.getSolution(), notifyConsumer);
         }
 
-    };
+    }
+
+    ;
 
 }
