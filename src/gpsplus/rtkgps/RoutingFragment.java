@@ -10,7 +10,6 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -43,9 +41,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -80,7 +76,7 @@ public class RoutingFragment extends Fragment {
     ViewGroup mCompassContainer;
     private Polyline drivenPath;
     private Polyline loadedPath;
-    private Boolean followPosition;
+    private Boolean zoomedIn;
 
     private MyLocationNewOverlay mLocationOverlay;
     private CompassOverlay mCompassOverlay;
@@ -94,7 +90,6 @@ public class RoutingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -183,7 +178,7 @@ public class RoutingFragment extends Fragment {
             loadedPath = new Polyline();
             loadedPath.setPoints(path);
             loadedPath.getOutlinePaint().setColor(Color.rgb(255, 132, 0));
-            loadedPath.getOutlinePaint().setStrokeWidth(2);
+            loadedPath.getOutlinePaint().setStrokeWidth(7);
             mMapView.getOverlays().add(loadedPath);
         }
     }
@@ -191,20 +186,13 @@ public class RoutingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        followPosition = false;
+        zoomedIn = false;
         mMapView = new MapView(inflater.getContext());
         View v = inflater.inflate(R.layout.fragment_routing, container, false);
         ButterKnife.bind(this, v);
-        //handle permissions first, before map is created. not depicted here
 
-        //load/initialize the osmdroid configuration, this can be done
         Context ctx = getActivity().getApplicationContext();
-        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        //setting this before the layout is inflated is a good idea
-        //it 'should' ensure that the map has a writable location for the map cache, even without permissions
-        //if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
-        //see also StorageUtils
-        //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
+
         this.mLocationOverlay = new MyLocationNewOverlay(mMyLocationProvider, mMapView);
         mLocationOverlay.enableMyLocation();
         mLocationOverlay.enableFollowLocation();
@@ -213,7 +201,8 @@ public class RoutingFragment extends Fragment {
 
         Bitmap scaled = Bitmap.createScaledBitmap(b, 48, 48, true);
         mLocationOverlay.setPersonIcon(scaled);
-
+        Float mScale = mMapView.getContext().getResources().getDisplayMetrics().density;
+        mLocationOverlay.setPersonHotspot(24.0f,24f);
         mMapView.getOverlays().add(mLocationOverlay);
         mCompassOverlay = new CompassOverlay(ctx, new InternalCompassOrientationProvider(ctx), mMapView);
         mCompassOverlay.enableCompass();
@@ -222,7 +211,7 @@ public class RoutingFragment extends Fragment {
         mMapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         mMapView.setMultiTouchControls(true);
 
-        //scales tiles to the current screen's DPI, helps with readability of labels
+        mMapView.setVerticalMapRepetitionEnabled(false);
         mMapView.setTilesScaledToDpi(true);
 
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -230,7 +219,7 @@ public class RoutingFragment extends Fragment {
 
 
         drivenPath.getOutlinePaint().setColor(Color.GREEN);
-        drivenPath.getOutlinePaint().setStrokeWidth(3);
+        drivenPath.getOutlinePaint().setStrokeWidth(8);
         mMapView.getOverlays().add(drivenPath);
 
         mMapViewContainer.addView(mMapView, 0);
@@ -263,8 +252,6 @@ public class RoutingFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        // XXX
         mStreamStatusUpdateTimer = new Timer();
         mStreamStatusUpdateTimer.scheduleAtFixedRate(
                 new TimerTask() {
@@ -272,7 +259,7 @@ public class RoutingFragment extends Fragment {
                         @Override
                         public void run() {
                             RoutingFragment.this.updateStatus();
-                            RoutingFragment.this.drawDrivenRoute(mMyLocationProvider);
+                            RoutingFragment.this.drawDrivenRoute();
                         }
                     };
 
@@ -289,7 +276,6 @@ public class RoutingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //  loadMapPreferences();
         mLocationOverlay.enableMyLocation(mMyLocationProvider);
         mLocationOverlay.enableFollowLocation();
         mCompassOverlay.enableCompass(this.mCompassOverlay.getOrientationProvider());
@@ -298,46 +284,52 @@ public class RoutingFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        //mPathOverlay.clearPath();
         mStreamStatusUpdateTimer.cancel();
         mStreamStatusUpdateTimer = null;
     }
 
     public void onPause() {
         super.onPause();
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().save(this, prefs);
-        mMapView.onPause();  //needed for compass, my location overlays, v6.0.0 and up
-        // saveMapPreferences();
+        mMapView.onPause();
         mLocationOverlay.disableMyLocation();
         mCompassOverlay.disableCompass();
     }
 
 
-    void drawDrivenRoute(MyLocationProvider mMyLocationProvider) {
-        Location lastKnownLocation = mMyLocationProvider.getLastKnownLocation();
-        if (lastKnownLocation != null) {
-            drivenPath.addPoint(new GeoPoint(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
-            if (!followPosition) {
-                // Set Zoom on position found
-                IMapController mapController = mMapView.getController();
-                mapController.setZoom(14.0);
-                mapController.setCenter(mLocationOverlay.getMyLocation());
-                followPosition = true;
+    void drawDrivenRoute() {
+        if (mLocationOverlay.getMyLocation() != null) {
+            Double latitude = mLocationOverlay.getMyLocation().getLatitude();
+            Double longitude = mLocationOverlay.getMyLocation().getLongitude();
+            int nrOfPoints = drivenPath.getActualPoints().size();
+Log.i(TAG, "NROFPOINTS " + nrOfPoints);
+            if (nrOfPoints > 0){
+                GeoPoint lastPoint = drivenPath.getActualPoints().get(nrOfPoints-1);
+                if (lastPoint.getLatitude() != latitude || lastPoint.getLongitude() != longitude ){
+                    drivenPath.addPoint(new GeoPoint(latitude, longitude));
+                }
+            }else {
+                drivenPath.addPoint(new GeoPoint(latitude, longitude));
 
             }
+            IMapController mapController = mMapView.getController();
+            mapController.animateTo(mLocationOverlay.getMyLocation());
+            mMapView.invalidate();
+            Log.i(TAG, "PATHSYNC drivenPath addPoint: " + latitude + " " + longitude);
+            if (!zoomedIn) {
+                // Set Zoom on position found
+                mapController.setZoom(17.0);
+                zoomedIn = true;
 
+            }
         }
-    }
+        }
+
 
     void updateStatus() {
         MainActivity ma;
         RtkNaviService rtks;
         int serverStatus;
 
-        // XXX
         ma = (MainActivity) getActivity();
 
         if (ma == null) return;
@@ -350,11 +342,9 @@ public class RoutingFragment extends Fragment {
             rtks.getStreamStatus(mStreamStatus);
             rtks.getRtkStatus(mRtkStatus);
             serverStatus = rtks.getServerStatus();
-            // appendSolutions(rtks.readSolutionBuffer());
             mMyLocationProvider.setStatus(mRtkStatus, !mMapView.isAnimating());
             mGTimeView.setTime(mRtkStatus.getSolution().getTime());
             mSolutionView.setStats(mRtkStatus);
-
 
         }
 
@@ -369,7 +359,6 @@ public class RoutingFragment extends Fragment {
         mMapView = null;
         mLocationOverlay = null;
         mCompassOverlay = null;
-        // ButterKnife.reset(this);
     }
 
     MyLocationProvider mMyLocationProvider = new MyLocationProvider();
@@ -420,6 +409,8 @@ public class RoutingFragment extends Fragment {
             mLastLocation.setLatitude(Math.toDegrees(pos.getLat()));
             mLastLocation.setLongitude(Math.toDegrees(pos.getLon()));
             mLastLocation.setAltitude(pos.getHeight());
+
+            Log.i(TAG, "PATHSYNC LASTLOCATION: " + mLastLocation.getLatitude() +  " " + mLastLocation.getLongitude());
 
             mLocationKnown = true;
             if (mConsumer != null) {
