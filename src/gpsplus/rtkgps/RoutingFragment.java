@@ -209,7 +209,7 @@ public class RoutingFragment extends Fragment {
         mLocationOverlay.enableMyLocation();
         mLocationOverlay.enableFollowLocation();
         // load a bitmap from the drawable folder
-        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.cursor);
+        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.car);
 
         Bitmap scaled = Bitmap.createScaledBitmap(b, 48, 48, true);
         mLocationOverlay.setPersonIcon(scaled);
