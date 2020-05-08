@@ -1,0 +1,6 @@
+[submodule "android/jni/simonlynen_android_libs"]
+	path = android/jni/simonlynen_android_libs
+	url = git://github.com/simonlynen/android_libs.git
+[submodule "android/jni/RTKLIB"]
+	path = android/jni/RTKLIB
+	url = https://github.com/eltorio/RTKLIB.git
