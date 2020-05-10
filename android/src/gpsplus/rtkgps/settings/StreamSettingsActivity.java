@@ -7,9 +7,12 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
-import android.support.v4.view.ViewPager;
+
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.legacy.app.FragmentPagerAdapter;
+import androidx.core.app.NavUtils;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.view.MenuItem;
 
 import gpsplus.rtkgps.R;
@@ -24,12 +27,12 @@ ActionBar.TabListener {
     public static final int STREAM_LOG_SETTINGS = 2;
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
-     * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
+     * {@link androidx.fragment.app.FragmentPagerAdapter} derivative, which
      * will keep every loaded fragment in memory. If this becomes too memory
      * intensive, it may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * {@link FragmentStatePagerAdapter}.
      */
     FragmentPagerAdapter mSectionsPagerAdapter;
 
