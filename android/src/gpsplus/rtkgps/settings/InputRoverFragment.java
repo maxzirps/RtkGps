@@ -12,6 +12,9 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceFragmentCompat;
+
 import gpsplus.rtkgps.BuildConfig;
 import gpsplus.rtkgps.R;
 import gpsplus.rtkgps.settings.StationPositionActivity.Value;
@@ -31,7 +34,7 @@ import java.util.Arrays;
 import javax.annotation.Nonnull;
 
 
-public class InputRoverFragment extends PreferenceFragment {
+public class InputRoverFragment extends PreferenceFragmentCompat {
 
     private static final boolean DBG = BuildConfig.DEBUG & true;
 
@@ -99,7 +102,7 @@ public class InputRoverFragment extends PreferenceFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         super.onCreate(savedInstanceState);
 
         getPreferenceManager().setSharedPreferencesName(getSharedPreferenceName());

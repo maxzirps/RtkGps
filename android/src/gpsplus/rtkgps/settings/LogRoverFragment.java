@@ -9,6 +9,8 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 
+import androidx.preference.PreferenceFragmentCompat;
+
 import gpsplus.rtkgps.BuildConfig;
 import gpsplus.rtkgps.R;
 import gpsplus.rtkgps.settings.widget.StreamTypePreference;
@@ -18,7 +20,7 @@ import gpsplus.rtklib.constants.StreamType;
 import javax.annotation.Nonnull;
 
 
-public class LogRoverFragment extends PreferenceFragment {
+public class LogRoverFragment extends PreferenceFragmentCompat {
 
     private static final boolean DBG = BuildConfig.DEBUG & true;
 
@@ -54,7 +56,7 @@ public class LogRoverFragment extends PreferenceFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         super.onCreate(savedInstanceState);
 
         if (DBG) Log.v(getSharedPreferenceName(), "onCreate() bundle: " + savedInstanceState);

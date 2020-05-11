@@ -1,5 +1,5 @@
 {
-  "ndkFolder": "/home/max/Android/Sdk/ndk/21.1.6352462",
+  "ndkFolder": "/home/max/Android/Sdk/ndk/21.0.6113669",
   "messages": [
     {
       "level": "INFO",
@@ -7,7 +7,7 @@
     },
     {
       "level": "INFO",
-      "message": "ndk.dir in local.properties is /home/max/Android/Sdk/ndk/21.1.6352462"
+      "message": "ndk.dir in local.properties is /home/max/Android/Sdk/ndk/21.0.6113669"
     },
     {
       "level": "INFO",
@@ -19,7 +19,7 @@
     },
     {
       "level": "INFO",
-      "message": "Considering /home/max/Android/Sdk/ndk/21.1.6352462 by ndk.dir"
+      "message": "Considering /home/max/Android/Sdk/ndk/21.0.6113669 by ndk.dir"
     },
     {
       "level": "INFO",
@@ -27,7 +27,7 @@
     },
     {
       "level": "INFO",
-      "message": "Considering /home/max/Android/Sdk/ndk/21.1.6352462 in SDK ndk folder"
+      "message": "Considering /home/max/Android/Sdk/ndk/21.0.6113669 in SDK ndk folder"
     },
     {
       "level": "INFO",
@@ -35,7 +35,7 @@
     },
     {
       "level": "INFO",
-      "message": "Found requested ndk.dir (/home/max/Android/Sdk/ndk/21.1.6352462) which has version 21.1.6352462"
+      "message": "Found requested ndk.dir (/home/max/Android/Sdk/ndk/21.0.6113669) which has version 21.0.6113669"
     }
   ]
 }

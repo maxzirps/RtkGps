@@ -2,15 +2,16 @@ package gpsplus.rtkgps.settings;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import androidx.fragment.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.legacy.app.FragmentPagerAdapter;
 import androidx.core.app.NavUtils;
+
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import android.view.MenuItem;
@@ -136,7 +137,7 @@ ActionBar.TabListener {
 
         private final Resources mResources;
 
-        public InputStreamSettingsPagerAdapter(FragmentManager fm, Resources r) {
+       public InputStreamSettingsPagerAdapter(FragmentManager fm, Resources r) {
             super(fm);
             mResources = r;
         }

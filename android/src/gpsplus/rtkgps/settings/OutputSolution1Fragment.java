@@ -6,8 +6,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceFragment;
 import android.util.Log;
+
+import androidx.preference.PreferenceFragmentCompat;
 
 import gpsplus.rtkgps.BuildConfig;
 import gpsplus.rtkgps.R;
@@ -22,7 +23,7 @@ import gpsplus.rtklib.constants.StreamType;
 import javax.annotation.Nonnull;
 
 
-public class OutputSolution1Fragment extends PreferenceFragment {
+public class OutputSolution1Fragment extends PreferenceFragmentCompat {
 
     private static final boolean DBG = BuildConfig.DEBUG & true;
 
@@ -66,8 +67,9 @@ public class OutputSolution1Fragment extends PreferenceFragment {
         mPreferenceChangeListener = new PreferenceChangeListener();
     }
 
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         super.onCreate(savedInstanceState);
 
         if (DBG) Log.v(getSharedPreferenceName(), "onCreate() bundle: " + savedInstanceState);
@@ -83,7 +85,6 @@ public class OutputSolution1Fragment extends PreferenceFragment {
                 return true;
             }
         });
-
     }
 
     @Override
