@@ -100,7 +100,6 @@ public class InputRoverFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        super.onCreate(savedInstanceState);
 
         getPreferenceManager().setSharedPreferencesName(getSharedPreferenceName());
         initPreferenceScreen();

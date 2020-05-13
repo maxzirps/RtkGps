@@ -55,7 +55,7 @@ public class LogRoverFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        super.onCreate(savedInstanceState);
+//        super.onCreate(savedInstanceState);
 
         if (DBG) Log.v(getSharedPreferenceName(), "onCreate() bundle: " + savedInstanceState);
 
