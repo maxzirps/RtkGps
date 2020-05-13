@@ -2,6 +2,8 @@ package gpsplus.rtkgps.settings;
 
 import android.app.ActionBar;
 import android.app.Activity;
+
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.FragmentTransaction;
@@ -19,7 +21,7 @@ import android.view.MenuItem;
 
 import gpsplus.rtkgps.R;
 
-public class StreamSettingsActivity extends Activity implements
+public class StreamSettingsActivity extends FragmentActivity implements
 ActionBar.TabListener {
 
     public static final String ARG_STEAM =  "stream";
@@ -58,17 +60,17 @@ ActionBar.TabListener {
         switch (stream) {
         case STREAM_INPUT_SETTINGS:
             mSectionsPagerAdapter = new InputStreamSettingsPagerAdapter(
-                    getFragmentManager(), getResources());
+                    getSupportFragmentManager(), getResources());
             setTitle(R.string.title_activity_input_stream_settings);
             break;
         case STREAM_OUTPUT_SETTINGS:
             mSectionsPagerAdapter = new OutputStreamSettingsPagerAdapter(
-                    getFragmentManager(), getResources());
+                    getSupportFragmentManager(), getResources());
             setTitle(R.string.title_activity_output_stream_settings);
             break;
         case STREAM_LOG_SETTINGS:
             mSectionsPagerAdapter = new LogStreamSettingsPagerAdapter(
-                    getFragmentManager(), getResources());
+                    getSupportFragmentManager(), getResources());
             setTitle(R.string.title_activity_log_stream_settings);
             break;
         default:
