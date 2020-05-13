@@ -3,16 +3,15 @@ arguments :
 NDK_PROJECT_PATH=null
 APP_BUILD_SCRIPT=/home/max/workspace/RtkGps/android/jni/Android.mk
 NDK_APPLICATION_MK=/home/max/workspace/RtkGps/android/jni/Application.mk
-APP_ABI=x86
-NDK_ALL_ABIS=x86
+APP_ABI=armeabi-v7a
+NDK_ALL_ABIS=armeabi-v7a
 NDK_DEBUG=1
 APP_PLATFORM=android-27
 NDK_OUT=/home/max/workspace/RtkGps/android/build/intermediates/ndkBuild/debug/obj
 NDK_LIBS_OUT=/home/max/workspace/RtkGps/android/build/intermediates/ndkBuild/debug/lib
-APP_SHORT_COMMANDS=false
-LOCAL_SHORT_COMMANDS=false
--B
--n
+gdalalljni
+ntripcaster
+proj
+rtkgps
 jvmArgs : 
 
-Build command args:

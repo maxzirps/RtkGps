@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.infstory:proguard-annotations:1.0.1@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f2d9ef8e7f3b5d1a553c87fa76710297/jetified-proguard-annotations-1.0.1/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f2d9ef8e7f3b5d1a553c87fa76710297/jetified-proguard-annotations-1.0.1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6259caabbe9f68110920ca0d7524451c/jetified-proguard-annotations-1.0.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6259caabbe9f68110920ca0d7524451c/jetified-proguard-annotations-1.0.1/res" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.infstory/proguard-annotations/1.0.1/aaadc80f3777756f905a33a1bc5d1d9bc4d61df2/proguard-annotations-1.0.1-javadoc.jar!/" />

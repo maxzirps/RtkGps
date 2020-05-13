@@ -9,10 +9,9 @@ NDK_DEBUG=1
 APP_PLATFORM=android-27
 NDK_OUT=/home/max/workspace/RtkGps/android/build/intermediates/ndkBuild/debug/obj
 NDK_LIBS_OUT=/home/max/workspace/RtkGps/android/build/intermediates/ndkBuild/debug/lib
-APP_SHORT_COMMANDS=false
-LOCAL_SHORT_COMMANDS=false
--B
--n
+gdalalljni
+ntripcaster
+proj
+rtkgps
 jvmArgs : 
 
-Build command args:
