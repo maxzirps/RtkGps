@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceFragment;
 import android.util.Log;
 
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import gpsplus.rtkgps.BuildConfig;
@@ -64,13 +62,17 @@ public class LogRoverFragment extends PreferenceFragmentCompat {
         getPreferenceManager().setSharedPreferencesName(getSharedPreferenceName());
 
         initPreferenceScreen();
-        findPreference(KEY_STREAM_SETTINGS_BUTTON).setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                streamSettingsButtonClicked();
-                return true;
-            }
-        });
+        Preference myPreference = findPreference(KEY_STREAM_SETTINGS_BUTTON);
+        myPreference.setOnPreferenceClickListener(
+                new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference arg0) {
+                        streamSettingsButtonClicked();
+                        return true;
+                    }
+                });
+
+
     }
 
     @Override

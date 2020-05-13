@@ -3,6 +3,7 @@ package gpsplus.rtkgps.settings;
 import android.app.ActionBar;
 import android.app.Activity;
 import androidx.fragment.app.FragmentManager;
+
 import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.os.Bundle;

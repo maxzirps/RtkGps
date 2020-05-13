@@ -5,14 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceFragment;
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import android.util.Log;
 
-import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import gpsplus.rtkgps.BuildConfig;
@@ -110,7 +107,7 @@ public class InputRoverFragment extends PreferenceFragmentCompat {
 
         mProcessingOptions = ProcessingOptions1Fragment.readPrefs(getActivity());
 
-        findPreference(KEY_STREAM_SETTINGS_BUTTON).setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        findPreference(KEY_STREAM_SETTINGS_BUTTON).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 streamSettingsButtonClicked();
@@ -118,7 +115,7 @@ public class InputRoverFragment extends PreferenceFragmentCompat {
             }
         });
 
-        findPreference(KEY_COMMANDS_AT_STARTUP_SHUTDOWN_BUTTON).setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        findPreference(KEY_COMMANDS_AT_STARTUP_SHUTDOWN_BUTTON).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 commandsAtStartupShutdownButtonClicked();
@@ -129,7 +126,7 @@ public class InputRoverFragment extends PreferenceFragmentCompat {
         final Preference stationBtn = findPreference(KEY_STATION_POSITION_BUTTON);
         if (stationBtn != null) {
             if (stationPositionButtonDisabledCause() == 0) {
-                stationBtn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                stationBtn.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
                         stationPositionButtonClicked();
