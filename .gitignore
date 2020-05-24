@@ -1,1 +1,4 @@
 node_modules/
+android/.idea
+android/.cxx
+android/.externalNativeBuild

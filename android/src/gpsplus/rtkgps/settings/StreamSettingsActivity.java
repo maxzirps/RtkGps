@@ -2,26 +2,20 @@ package gpsplus.rtkgps.settings;
 
 import android.app.ActionBar;
 import android.app.Activity;
-
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.core.app.NavUtils;
-
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.view.MenuItem;
+
+import androidx.core.app.NavUtils;
+import androidx.legacy.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import gpsplus.rtkgps.R;
 
-public class StreamSettingsActivity extends FragmentActivity implements
+public class StreamSettingsActivity extends Activity implements
 ActionBar.TabListener {
 
     public static final String ARG_STEAM =  "stream";
@@ -31,12 +25,12 @@ ActionBar.TabListener {
     public static final int STREAM_LOG_SETTINGS = 2;
 
     /**
-     * The {@link PagerAdapter} that will provide
+     * The {@link androidx.core.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
-     * {@link androidx.fragment.app.FragmentPagerAdapter} derivative, which
+     * {@link androidx.core.app.FragmentPagerAdapter} derivative, which
      * will keep every loaded fragment in memory. If this becomes too memory
      * intensive, it may be best to switch to a
-     * {@link FragmentStatePagerAdapter}.
+     * {@link androidx.core.app.FragmentStatePagerAdapter}.
      */
     FragmentPagerAdapter mSectionsPagerAdapter;
 
@@ -60,17 +54,17 @@ ActionBar.TabListener {
         switch (stream) {
         case STREAM_INPUT_SETTINGS:
             mSectionsPagerAdapter = new InputStreamSettingsPagerAdapter(
-                    getSupportFragmentManager(), getResources());
+                    getFragmentManager(), getResources());
             setTitle(R.string.title_activity_input_stream_settings);
             break;
         case STREAM_OUTPUT_SETTINGS:
             mSectionsPagerAdapter = new OutputStreamSettingsPagerAdapter(
-                    getSupportFragmentManager(), getResources());
+                    getFragmentManager(), getResources());
             setTitle(R.string.title_activity_output_stream_settings);
             break;
         case STREAM_LOG_SETTINGS:
             mSectionsPagerAdapter = new LogStreamSettingsPagerAdapter(
-                    getSupportFragmentManager(), getResources());
+                    getFragmentManager(), getResources());
             setTitle(R.string.title_activity_log_stream_settings);
             break;
         default:
@@ -140,7 +134,7 @@ ActionBar.TabListener {
 
         private final Resources mResources;
 
-       public InputStreamSettingsPagerAdapter(FragmentManager fm, Resources r) {
+        public InputStreamSettingsPagerAdapter(FragmentManager fm, Resources r) {
             super(fm);
             mResources = r;
         }

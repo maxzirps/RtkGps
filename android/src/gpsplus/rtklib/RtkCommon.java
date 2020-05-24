@@ -1,6 +1,6 @@
 package gpsplus.rtklib;
 
-import androidx.preference.ListPreference;
+import android.preference.ListPreference;
 
 import gpsplus.rtkgps.MainActivity;
 import gpsplus.rtklib.constants.GeoidModel;

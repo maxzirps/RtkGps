@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import androidx.preference.EditTextPreference;
-import androidx.preference.ListPreference;
-import androidx.preference.PreferenceFragment;
+import android.preference.EditTextPreference;
+import android.preference.ListPreference;
+import android.preference.PreferenceFragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
@@ -155,16 +155,6 @@ public class ProcessingOptions1Fragment extends PreferenceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        getPreferenceManager().setSharedPreferencesName(SHARED_PREFS_NAME);
-        addPreferencesFromResource(R.xml.processing_options1);
-
-        initSettings1();
-    }
-
-    @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         super.onCreate(savedInstanceState);
 
         getPreferenceManager().setSharedPreferencesName(SHARED_PREFS_NAME);

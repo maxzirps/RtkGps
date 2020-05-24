@@ -8,13 +8,11 @@ import android.preference.PreferenceFragment;
 
 //import com.dropbox.sync.android.DbxAccountManager;
 
-import androidx.preference.PreferenceFragmentCompat;
-
 import gpsplus.rtkgps.MainActivity;
 import gpsplus.rtkgps.R;
 
 
-public class OutputGPXTraceFragment extends PreferenceFragmentCompat {
+public class OutputGPXTraceFragment extends PreferenceFragment {
 
     public static final String SHARED_PREFS_NAME = "OutputGPXTrace";
     @SuppressWarnings("unused")
@@ -24,7 +22,7 @@ public class OutputGPXTraceFragment extends PreferenceFragmentCompat {
     public static final String KEY_FILENAME = "gpxtrace_file_filename";
 
     @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+    public void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         getPreferenceManager().setSharedPreferencesName(SHARED_PREFS_NAME);

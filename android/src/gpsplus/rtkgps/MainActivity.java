@@ -19,9 +19,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceActivity;
-import androidx.legacy.app.ActionBarDrawerToggle;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -32,16 +29,25 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.legacy.app.ActionBarDrawerToggle;
+
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
+
 import butterknife.BindString;
-import butterknife.ButterKnife;
 import butterknife.BindView;
-
-// import com.dropbox.sync.android.DbxAccountManager;
-
+import butterknife.ButterKnife;
 import gpsplus.ntripcaster.NTRIPCaster;
 import gpsplus.rtkgps.settings.NTRIPCasterSettingsFragment;
 import gpsplus.rtkgps.settings.ProcessingOptions1Fragment;
@@ -52,13 +58,7 @@ import gpsplus.rtkgps.settings.StreamSettingsActivity;
 import gpsplus.rtkgps.utils.ChangeLog;
 import gpsplus.rtkgps.utils.GpsTime;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.annotation.Nonnull;
+// import com.dropbox.sync.android.DbxAccountManager;
 
 public class MainActivity extends Activity implements OnSharedPreferenceChangeListener{
 
@@ -83,7 +83,8 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     String m_PointName = "POINT";
     boolean m_bRet_pointName = false;
 
-    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
     @BindView(R.id.navigation_drawer) View mNavDrawer;
 
     @BindView(R.id.navdraw_server_switch) Switch mNavDrawerServerSwitch;
