@@ -18,19 +18,10 @@ public class MyReactActivity extends Activity implements DefaultHardwareBackBtnH
     private ReactRootView mReactRootView;
     private ReactInstanceManager mReactInstanceManager;
 
-    private final int OVERLAY_PERMISSION_REQ_CODE = 112314512;  // Choose any value
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
-            }
-        }
 
 
         mReactRootView = new ReactRootView(this);
@@ -45,21 +36,9 @@ public class MyReactActivity extends Activity implements DefaultHardwareBackBtnH
                 .build();
         // The string here (e.g. "MyReactNativeApp") has to match
         // the string in AppRegistry.registerComponent() in index.js
-        mReactRootView.startReactApplication(mReactInstanceManager, "MyReactNativeApp", null);
+        mReactRootView.startReactApplication(mReactInstanceManager, "react-native-rtkgps", null);
 
         setContentView(mReactRootView);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    // SYSTEM_ALERT_WINDOW permission not granted
-                }
-            }
-        }
-        mReactInstanceManager.onActivityResult( this, requestCode, resultCode, data );
     }
 
     @Override

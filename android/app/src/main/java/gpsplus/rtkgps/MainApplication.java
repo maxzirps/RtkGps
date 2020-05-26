@@ -7,6 +7,8 @@ import android.os.StrictMode;
 import android.util.Log;
 
 // import com.airbnb.android.react.maps.MapsPackage;
+import com.airbnb.android.react.maps.MapsPackage;
+import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -82,10 +84,11 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
-            return Arrays.<ReactPackage>asList(
-                    new MainReactPackage()
-                    //new MapsPackage()
-            );
+            List<ReactPackage> packages = new PackageList(this).getPackages();
+            // Packages that cannot be autolinked yet can be added manually here, for example:
+            // packages.add(new MyReactNativePackage());
+            packages.add(new MapsPackage());
+            return packages;
         }
 
         @Override

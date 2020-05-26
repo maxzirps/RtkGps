@@ -15,10 +15,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceActivity;
+import android.provider.Settings;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -75,7 +78,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     public static final String APP_SECRET = "hfmsbkv4ktyl60h";
     public static final String RTKGPS_CHILD_DIRECTORY = "RtkGps/";
 //    private DbxAccountManager mDbxAcctMgr;
-
+private final int OVERLAY_PERMISSION_REQ_CODE = 15423534;
     RtkNaviService mRtkService;
     boolean mRtkServiceBound = false;
     private static DemoModeLocation mDemoModeLocation;
@@ -211,6 +214,18 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
         ChangeLog cl = new ChangeLog(this);
         if (cl.firstRun())
             cl.getLogDialog().show();
+
+/*
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+            }
+        }
+ */
     }
 
     private void toggleCasterSwitch() {
@@ -465,7 +480,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
             setNavDrawerItemFragment(itemId);
             break;
             case R.id.navdraw_item_reactnative:
-                Intent myIntent = new Intent(MainActivity.this, MyReactActivity.class);
+                Intent myIntent = new Intent(this, MyReactActivity.class);
                 MainActivity.this.startActivity(myIntent);
                 break;
 
@@ -695,6 +710,15 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
  //       } else {
             super.onActivityResult(requestCode, resultCode, data);
  //       }
+      /*  if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    // SYSTEM_ALERT_WINDOW permission not granted
+                }
+            }
+        }
+        mReactInstanceManager.onActivityResult( this, requestCode, resultCode, data );
+    */
     }
     public static String getApplicationDirectory() {
         return MainActivity.mApplicationDirectory;
