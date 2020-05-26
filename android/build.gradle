@@ -1,141 +1,48 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+
+ext {    
+    react = [
+        nodeExecutableAndArgs:  ["/usr/local/bin/node"]
+    ]
+}
+
 buildscript {
+    ext {
+        buildToolsVersion = "27.0.3"
+        minSdkVersion = 24
+        compileSdkVersion = 28
+        targetSdkVersion = 27
+        react = [
+                nodeExecutableAndArgs:  ["/usr/local/bin/node"]
+        ]
+    }
     repositories {
-        maven {
-            // All of React Native (JS, Android binaries) is installed from npm
-
-     url "$rootDir/../node_modules/react-native/android"
-        }
-        mavenCentral()
-        jcenter()
         google()
-
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath("com.android.tools.build:gradle:3.5.2")
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
-}
-apply plugin: 'com.android.application'
-
-
-
-ext {
-    compileSdkVersion   = 28
-    targetSdkVersion    = 27
-    buildToolsVersion   = '27.0.3'
-    minSdkVersion       = 24
-    supportLibVersion   = "27.1.1"
-    playServicesVersion = "17.0.0" // or find latest version
-    androidMapsUtilsVersion = "0.5+"
 }
 
 allprojects {
     repositories {
+        mavenLocal()
         maven {
-            // All of React Native (JS, Android binaries) is installed from npm
-            url "$rootDir/../node_modules/react-native/android"
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url("$rootDir/../node_modules/react-native/android")
         }
-        mavenCentral()
-        jcenter()
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+
         google()
+        jcenter()
+        maven { url 'https://www.jitpack.io' }
     }
 }
-
-repositories {
-    maven {
-        // All of React Native (JS, Android binaries) is installed from npm
-        url "$rootDir/../node_modules/react-native/android"
-    }
-    mavenCentral()
-    jcenter()
-    google()
-}
-
-dependencies {
-
-    implementation  group: 'cz.msebera.android' , name: 'httpclient' , version: '4.4.+'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    // implementation 'com.google.android.gms:play-services:12.0.1'
-     // implementation 'com.google.android.gms:play-services-gcm:17.0.0'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.jakewharton:butterknife:10.2.1'
-    implementation 'com.karumi:dexter:5.0.0'
-    implementation 'ch.acra:acra:4.5.0'
-    implementation 'commons-net:commons-net:3.6'
-    implementation 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'com.infstory:proguard-annotations:1.0.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
-    implementation 'org.osmdroid:osmdroid-android:6.1.6'
-     implementation "com.facebook.react:react-native:0.52.2" // From node_modules
-    implementation 'junit:junit:4.12'
-    implementation(project(':react-native-maps')){
-        exclude group: 'com.google.android.gms', module: 'play-services-base'
-        exclude group: 'com.google.android.gms', module: 'play-services-maps'
-    }
-    implementation 'com.google.android.gms:play-services-base:17.0.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-
-}
-
-android {
-    sourceSets.main.res.filter.exclude '**/proj4/jniwrap/org/**'
-
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
-
-    compileSdkVersion 28
-    buildToolsVersion '27.0.3'
-    defaultConfig {
-        applicationId "gpsplus.rtkgps"
-        minSdkVersion 24
-        targetSdkVersion 27
-        multiDexEnabled true
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-
-        packagingOptions {
-            exclude "lib/arm64-v8a/librealm-jni.so"
-        }
-    }
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-            jniLibs.srcDir 'libs'
-        }
-
-           //    instrumentTest.setRoot('tests')
-    }
-    externalNativeBuild {
-        ndkBuild {
-            path 'jni/Android.mk'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    buildTypes {
-        debug {
-            debuggable true
-            jniDebuggable false
-            renderscriptDebuggable false
-
-        }
-
-    }
-    productFlavors {
-    }
-}
-
