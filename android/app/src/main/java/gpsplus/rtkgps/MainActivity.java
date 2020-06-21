@@ -475,31 +475,25 @@ private final int OVERLAY_PERMISSION_REQ_CODE = 15423534;
 
     private void selectDrawerItem(int itemId) {
         switch (itemId) {
-            case R.id.navdraw_item_routing:
-        case R.id.navdraw_item_status:
-            setNavDrawerItemFragment(itemId);
-            break;
-            case R.id.navdraw_item_reactnative:
-                Intent myIntent = new Intent(this, MyReactActivity.class);
-                MainActivity.this.startActivity(myIntent);
+            case R.id.navdraw_item_status:
+                setNavDrawerItemFragment(itemId);
                 break;
-
-        case R.id.navdraw_item_input_streams:
-            showInputStreamSettings();
-            break;
-        case R.id.navdraw_item_output_streams:
-            showOutputStreamSettings();
-            break;
-        case R.id.navdraw_item_log_streams:
-            showLogStreamSettings();
-            break;
-        case R.id.navdraw_item_processing_options:
-        case R.id.navdraw_item_solution_options:
-        case R.id.navdraw_item_ntripcaster_options:
-            showSettings(itemId);
-            break;
-        default:
-            throw new IllegalStateException();
+            case R.id.navdraw_item_input_streams:
+                showInputStreamSettings();
+                break;
+            case R.id.navdraw_item_output_streams:
+                showOutputStreamSettings();
+                break;
+            case R.id.navdraw_item_log_streams:
+                showLogStreamSettings();
+                break;
+            case R.id.navdraw_item_processing_options:
+            case R.id.navdraw_item_solution_options:
+            case R.id.navdraw_item_ntripcaster_options:
+                showSettings(itemId);
+                break;
+            default:
+                throw new IllegalStateException();
         }
     }
 
