@@ -39,10 +39,14 @@ import butterknife.BindString;
 //import com.dropbox.sync.android.DbxPath;
 //import com.dropbox.sync.android.DbxPath.InvalidPathException;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import gpsplus.rtkgps.reactnative.ControlBridgeModule;
 import gpsplus.rtkgps.settings.OutputGPXTraceFragment;
 import gpsplus.rtkgps.settings.ProcessingOptions1Fragment;
 import gpsplus.rtkgps.settings.SettingsHelper;
@@ -375,10 +379,37 @@ public class RtkNaviService extends IntentService implements LocationListener {
         mRtkServer.setServerSettings(settings);
 
         mLStartingTime = System.currentTimeMillis();
+
         if (!mRtkServer.start()) {
             Log.e(TAG, "rtkSrvStart() error");
             return;
         }
+        Handler handler = new Handler();
+        int delay = 1000; //milliseconds
+
+        handler.postDelayed(new Runnable(){
+            public void run(){
+                //do something
+                ControlBridgeModule.sendToJS("abcdef");
+
+                Solution[] solutions = readSolutionBuffer();
+
+                if (solutions.length > 0) {
+                    Solution s = solutions[0];
+
+                    Position3d pos = RtkCommon.ecef2pos(s.getPosition());
+
+
+
+                    ControlBridgeModule.sendToJS(s.getTime().getUtcTimeMillis() + " | " + Math.toDegrees(pos.getLat()) + " | " + Math.toDegrees(pos.getLon()) + " | " + pos.getHeight());
+
+                }
+
+         if (mBoolIsRunning) {
+                    handler.postDelayed(this, delay);
+                }
+            }
+        }, delay);
 
         SharedPreferences processPrefs = this.getBaseContext().getSharedPreferences(ProcessingOptions1Fragment.SHARED_PREFS_NAME, 0);
         String ephemVa = processPrefs.getString(ProcessingOptions1Fragment.KEY_SAT_EPHEM_CLOCK,"");
@@ -397,8 +428,8 @@ public class RtkNaviService extends IntentService implements LocationListener {
 
         mCpuLock.acquire();
 
-        Notification notification = createForegroundNotification();
-        startForeground(NOTIFICATION, notification);
+     //   Notification notification = createForegroundNotification();
+      //  startForeground(NOTIFICATION, notification);
 
         SharedPreferences prefs = this.getBaseContext().getSharedPreferences(SolutionOutputSettingsFragment.SHARED_PREFS_NAME, 0);
         mBoolMockLocationsPref = prefs.getBoolean(SolutionOutputSettingsFragment.KEY_OUTPUT_MOCK_LOCATION, false);
@@ -443,6 +474,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
         //load satellite antennas
         loadSatAnt(MainActivity.getApplicationDirectory()+File.separator+"files"+File.separator+"data"+File.separator+"igs05.atx");
         mBoolIsRunning = true;
+
     }
 
 

@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -24,10 +24,16 @@ function Separator() {
 }
 
 const App: () => React$Node = () => {
+  const [status, setStatus] = useState('Stopped');
+  const [solution, setSolution] = useState('');
+
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.ToastExample);
     this.eventListener = eventEmitter.addListener('TEST', event => {
-      console.log(event.eventProperty); // "someValue"
+      if (event && event.eventProperty) {
+        console.log(event.eventProperty); // "someValue"
+        setSolution(event.eventProperty);
+      }
     });
     return () => {
       this.eventListener.remove();
@@ -50,7 +56,10 @@ const App: () => React$Node = () => {
         </View>
         <View>
           <Button
-            onPress={() => NativeModules.ControlBridge.start()}
+            onPress={() => {
+              NativeModules.ControlBridge.start();
+              setStatus('Started');
+            }}
             title="Start"
             accessibilityLabel="Start RTK Service"
           />
@@ -58,7 +67,11 @@ const App: () => React$Node = () => {
         <Separator />
         <View>
           <Button
-            onPress={() => NativeModules.ControlBridge.stop()}
+            onPress={() => {
+              NativeModules.ControlBridge.stop();
+              setStatus('Stopped');
+              setSolution('');
+            }}
             title="Stop"
             accessibilityLabel="Stop RTK Service"
           />
@@ -70,6 +83,12 @@ const App: () => React$Node = () => {
             title="Open Legacy App"
             accessibilityLabel="Open legacy app interface"
           />
+        </View>
+        <Separator />
+        <View>
+          <Text>
+            {status} {solution}
+          </Text>
         </View>
       </SafeAreaView>
     </>
