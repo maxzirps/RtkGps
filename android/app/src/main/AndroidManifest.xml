@@ -49,21 +49,21 @@
 			android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 		</activity>
         <activity
-            android:name="gpsplus.rtkgps.MainActivity"
+            android:name="gpsplus.rtkgps.MainActivity2"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.ActionBarOverlay"
-            android:launchMode="singleTop" >
+			android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-			<intent-filter>
-			    <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-			</intent-filter>
-			<meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                      android:resource="@xml/usb_device_filter" />
-        </activity>
+		</activity>
+		<activity
+			android:name="gpsplus.rtkgps.MainActivity"
+			android:label="@string/app_name"
+			android:theme="@style/AppTheme.ActionBarOverlay"
+			android:launchMode="singleTop" />
 
 		<activity android:name=".settings.SettingsActivity"
 			android:parentActivityName="gpsplus.rtkgps.MainActivity" >

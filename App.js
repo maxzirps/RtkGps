@@ -8,88 +8,73 @@
 
 import React from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
-  View,
+  SafeAreaView,
   Text,
-  StatusBar,
+  Alert,
+  View,
+  Button,
+  NativeModules,
 } from 'react-native';
-import MapView from 'react-native-maps';
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+
+function Separator() {
+  return <View style={styles.separator} />;
+}
 
 const App: () => React$Node = () => {
   return (
     <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <MapView
-              initialRegion={{
-                latitude: 37.78825,
-                longitude: -122.4324,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
-            />
-          </View>
-        </ScrollView>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.mapContainer}>
+          <MapView
+            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+            style={styles.map}
+            region={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
+            }}
+          />
+        </View>
+        <View>
+          <Button
+            onPress={() => NativeModules.ActivityStarter.navigateToExample()}
+            title="Legacy"
+            accessibilityLabel="Learn more about this purple button"
+          />
+        </View>
       </SafeAreaView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
+    marginHorizontal: 16,
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  mapContainer: {
+    height: 500,
+    marginTop: 20,
+    marginBottom: 20,
   },
-  body: {
-    backgroundColor: Colors.white,
+  title: {
+    textAlign: 'center',
+    marginVertical: 8,
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  fixToText: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
+  separator: {
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
 });
 

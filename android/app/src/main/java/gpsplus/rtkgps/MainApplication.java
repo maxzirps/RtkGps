@@ -46,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
                     .build());
         }
         super.onCreate();
+        Log.d("AAAAAAAAA", "AAAAAAAAAAAAAAAa");
         //ACRA.init(this);
         System.loadLibrary("proj");
         Log.v("Proj4","Proj4 version: "+PJ.getVersion());
@@ -84,11 +85,11 @@ public class MainApplication extends Application implements ReactApplication {
 
         @Override
         protected List<ReactPackage> getPackages() {
-            List<ReactPackage> packages = new PackageList(this).getPackages();
-            // Packages that cannot be autolinked yet can be added manually here, for example:
-            // packages.add(new MyReactNativePackage());
-            packages.add(new MapsPackage());
-            return packages;
+            Log.d("TEST", "ADDED PACKAGES AAAAAAAAAAAAAAAA");
+            return Arrays.asList(
+                    new MainReactPackage(),
+                    new ActivityStarterPackage(),
+                    new MapsPackage());
         }
 
         @Override
@@ -100,6 +101,8 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     public ReactNativeHost getReactNativeHost() {
+
+        Log.d("TEST", "AAAAAAAAAAAAAAAAAAAA");
         return mReactNativeHost;
     }
 }
