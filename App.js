@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -15,6 +15,7 @@ import {
   View,
   Button,
   NativeModules,
+  NativeEventEmitter,
 } from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 
@@ -23,6 +24,15 @@ function Separator() {
 }
 
 const App: () => React$Node = () => {
+  useEffect(() => {
+    const eventEmitter = new NativeEventEmitter(NativeModules.ToastExample);
+    this.eventListener = eventEmitter.addListener('TEST', event => {
+      console.log(event.eventProperty); // "someValue"
+    });
+    return () => {
+      this.eventListener.remove();
+    };
+  }, []);
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -40,9 +50,25 @@ const App: () => React$Node = () => {
         </View>
         <View>
           <Button
+            onPress={() => NativeModules.ControlBridge.start()}
+            title="Start"
+            accessibilityLabel="Start RTK Service"
+          />
+        </View>
+        <Separator />
+        <View>
+          <Button
+            onPress={() => NativeModules.ControlBridge.stop()}
+            title="Stop"
+            accessibilityLabel="Stop RTK Service"
+          />
+        </View>
+        <Separator />
+        <View>
+          <Button
             onPress={() => NativeModules.ActivityStarter.navigateToExample()}
-            title="Legacy"
-            accessibilityLabel="Learn more about this purple button"
+            title="Open Legacy App"
+            accessibilityLabel="Open legacy app interface"
           />
         </View>
       </SafeAreaView>

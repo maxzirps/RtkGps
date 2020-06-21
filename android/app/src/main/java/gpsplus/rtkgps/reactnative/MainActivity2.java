@@ -1,4 +1,4 @@
-package gpsplus.rtkgps;
+package gpsplus.rtkgps.reactnative;
 
 import com.facebook.react.ReactActivity;
 

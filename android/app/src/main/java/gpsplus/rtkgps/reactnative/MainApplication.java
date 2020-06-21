@@ -1,4 +1,4 @@
-package gpsplus.rtkgps;
+package gpsplus.rtkgps.reactnative;
 
 import android.app.Application;
 import android.content.pm.PackageInfo;
@@ -8,7 +8,6 @@ import android.util.Log;
 
 // import com.airbnb.android.react.maps.MapsPackage;
 import com.airbnb.android.react.maps.MapsPackage;
-import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -22,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import gpsplus.ntripcaster.NTRIPCaster;
+import gpsplus.rtkgps.BuildConfig;
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -89,6 +89,7 @@ public class MainApplication extends Application implements ReactApplication {
             return Arrays.asList(
                     new MainReactPackage(),
                     new ActivityStarterPackage(),
+                    new ControlBridgePackage(),
                     new MapsPackage());
         }
 
