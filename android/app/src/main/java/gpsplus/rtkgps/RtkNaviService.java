@@ -401,7 +401,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
                     ControlBridgeModule.sendToJS("latitude", Math.toDegrees(pos.getLat()));
                     ControlBridgeModule.sendToJS("longitude", Math.toDegrees(pos.getLon()));
 
-               
+
                 }
 
          if (mBoolIsRunning) {
