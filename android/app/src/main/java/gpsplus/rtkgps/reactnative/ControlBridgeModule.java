@@ -50,12 +50,12 @@ public class ControlBridgeModule extends ReactContextBaseJavaModule {
         reactContext.startService(intent);
     }
 
-    public static void sendToJS(String message) {
+    public static void sendToJS(String propertyName, Double value) {
         WritableMap params = Arguments.createMap();
-        params.putString("eventProperty", message);
+        params.putDouble(propertyName, value);
 
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit("TEST", params);
+                .emit("solution", params);
     }
 
 

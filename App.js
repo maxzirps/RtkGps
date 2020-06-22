@@ -1,23 +1,14 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
   Text,
-  Alert,
   View,
   Button,
   NativeModules,
   NativeEventEmitter,
 } from 'react-native';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import NavigationMap from './NavigationMap';
 
 function Separator() {
   return <View style={styles.separator} />;
@@ -26,33 +17,40 @@ function Separator() {
 const App: () => React$Node = () => {
   const [status, setStatus] = useState('Stopped');
   const [solution, setSolution] = useState('');
+  const [curPos, setCurPos] = useState({
+    latitude: 37.420814,
+    longitude: -122.081949,
+  });
+  const prevPos = useRef();
+  useEffect(() => {
+    prevPos.current = curPos;
+  });
 
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.ToastExample);
-    this.eventListener = eventEmitter.addListener('TEST', event => {
-      if (event && event.eventProperty) {
-        console.log(event.eventProperty); // "someValue"
-        setSolution(event.eventProperty);
+    eventEmitter.addListener('solution', event => {
+      if (event.latitude) {
+        setCurPos({...curPos, latitude: event.latitude});
+      }
+      if (event.longitude) {
+        setCurPos({...curPos, longitude: event.longitude});
       }
     });
     return () => {
-      this.eventListener.remove();
+      eventEmitter.removeAllListeners('solution');
     };
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCurPos({...curPos, longitude: curPos.longitude + 0.01});
+    }, 3000);
+  }, [curPos]);
   return (
     <>
       <SafeAreaView style={styles.container}>
         <View style={styles.mapContainer}>
-          <MapView
-            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-            style={styles.map}
-            region={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }}
-          />
+          <NavigationMap curPos={curPos} prevPos={prevPos.current} />
         </View>
         <View>
           <Button
@@ -87,7 +85,7 @@ const App: () => React$Node = () => {
         <Separator />
         <View>
           <Text>
-            {status} {solution}
+            {status} {solution} {JSON.stringify(curPos)}
           </Text>
         </View>
       </SafeAreaView>

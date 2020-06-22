@@ -390,7 +390,6 @@ public class RtkNaviService extends IntentService implements LocationListener {
         handler.postDelayed(new Runnable(){
             public void run(){
                 //do something
-                ControlBridgeModule.sendToJS("abcdef");
 
                 Solution[] solutions = readSolutionBuffer();
 
@@ -399,10 +398,10 @@ public class RtkNaviService extends IntentService implements LocationListener {
 
                     Position3d pos = RtkCommon.ecef2pos(s.getPosition());
 
+                    ControlBridgeModule.sendToJS("latitude", Math.toDegrees(pos.getLat()));
+                    ControlBridgeModule.sendToJS("longitude", Math.toDegrees(pos.getLon()));
 
-
-                    ControlBridgeModule.sendToJS(s.getTime().getUtcTimeMillis() + " | " + Math.toDegrees(pos.getLat()) + " | " + Math.toDegrees(pos.getLon()) + " | " + pos.getHeight());
-
+               
                 }
 
          if (mBoolIsRunning) {
