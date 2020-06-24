@@ -32,6 +32,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import gpsplus.rtkgps.reactnative.ControlBridgeModule;
 import gpsplus.rtkgps.view.GTimeView;
 import gpsplus.rtkgps.view.GpsSkyView;
 import gpsplus.rtkgps.view.SnrView;
@@ -347,7 +348,7 @@ public class StatusFragment extends Fragment {
 
         if (ma == null) return;
 
-        rtks = null;
+        rtks = ControlBridgeModule.getRtkNaviService();
         if (rtks == null) {
             serverStatus = RtkServerStreamStatus.STATE_CLOSE;
             // mRoverObservationStatus.clear();

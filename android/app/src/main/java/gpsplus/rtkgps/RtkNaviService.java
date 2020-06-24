@@ -5,47 +5,40 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.IntentService;
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.provider.Settings;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
-import butterknife.BindString;
 
-//import com.dropbox.sync.android.DbxAccountManager;
-//import com.dropbox.sync.android.DbxException;
-//import com.dropbox.sync.android.DbxException.Unauthorized;
-//import com.dropbox.sync.android.DbxFile;
-//import com.dropbox.sync.android.DbxFileSystem;
-//import com.dropbox.sync.android.DbxPath;
-//import com.dropbox.sync.android.DbxPath.InvalidPathException;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Locale;
+
+import butterknife.BindString;
 import gpsplus.rtkgps.reactnative.ControlBridgeModule;
 import gpsplus.rtkgps.settings.OutputGPXTraceFragment;
 import gpsplus.rtkgps.settings.ProcessingOptions1Fragment;
@@ -73,12 +66,6 @@ import gpsplus.rtklib.constants.EphemerisOption;
 import gpsplus.rtklib.constants.GeoidModel;
 import gpsplus.rtklib.constants.StreamType;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Locale;
 
 public class RtkNaviService extends IntentService implements LocationListener {
 
@@ -125,6 +112,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
     public RtkNaviService() {
         super(RtkNaviService.class.getSimpleName());
         // TODO Auto-generated constructor stub
+        ControlBridgeModule.setRtkNaviService(this);
     }
 
     @SuppressWarnings("unused")

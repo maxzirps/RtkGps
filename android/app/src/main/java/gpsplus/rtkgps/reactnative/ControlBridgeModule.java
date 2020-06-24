@@ -1,12 +1,9 @@
 package gpsplus.rtkgps.reactnative;
 
 
-import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Handler;
 import android.os.IBinder;
 
 import com.facebook.react.bridge.Arguments;
@@ -16,17 +13,20 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import gpsplus.rtkgps.MainActivity;
 import gpsplus.rtkgps.RtkNaviService;
-import gpsplus.rtkgps.StatusFragment;
 
 
 public class ControlBridgeModule extends ReactContextBaseJavaModule {
     private static ReactApplicationContext reactContext;
+    private static RtkNaviService rtkNaviService = null;
 
+    public static void setRtkNaviService(RtkNaviService rtkNaviServiceInput) {
+        rtkNaviService = rtkNaviServiceInput;
+    }
+
+    public static RtkNaviService getRtkNaviService() {
+       return rtkNaviService;
+    }
 
 
     ControlBridgeModule(ReactApplicationContext context) {

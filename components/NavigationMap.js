@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import MapView from 'react-native-maps';
-import carImage from './assets/car.png';
+import carImage from '../assets/car.png';
 
 const NavigationMap: () => React$Node = ({prevPos, curPos}) => {
   const mapEl = useRef(null);
@@ -45,6 +45,12 @@ const NavigationMap: () => React$Node = ({prevPos, curPos}) => {
           image={carImage}
         />
       </MapView>
+      <View style={styles.bottomRightOfMap}>
+        <Text>
+          {(curPos.latitude + '').substr(0, 7)} |{' '}
+          {(curPos.longitude + '').substr(0, 7)}
+        </Text>
+      </View>
     </View>
   );
 };
@@ -53,6 +59,14 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
     width: '100%',
+  },
+  bottomRightOfMap: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'white',
+    padding: 2,
+    minWidth: 120,
   },
 });
 
