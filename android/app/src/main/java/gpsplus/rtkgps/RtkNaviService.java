@@ -229,12 +229,9 @@ public class RtkNaviService extends IntentService implements LocationListener {
 
     public final RtkServerObservationStatus getRoverObservationStatus(
             RtkServerObservationStatus status) {
-        if (MainActivity.getDemoModeLocation().isInDemoMode() && mbStarted) {
-            return MainActivity.getDemoModeLocation().getObservationStatus(status);
-        } else {
+
             // fills the graph
             return mRtkServer.getRoverObservationStatus(status);
-        }
     }
 
     public final RtkServerObservationStatus getBaseObservationStatus(
@@ -296,19 +293,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
         GpsTime gpsTime = new GpsTime();
         gpsTime.setTime(System.currentTimeMillis());
 
-        if (MainActivity.getDemoModeLocation().isInDemoMode()) {
-            DemoModeLocation demoModeLocation = MainActivity.getDemoModeLocation();
-            nbSat = demoModeLocation.getNbSat();
-            Qe[4] = Math.pow(demoModeLocation.getNAccuracy(),2);
-            Qe[0] = Math.pow(demoModeLocation.getEAccuracy(),2);
-            Qe[8] = Math.pow(demoModeLocation.getVAccuracy(),2);
-            roverPos = demoModeLocation.getPosition();
-            lat = roverPos.getLat();
-            lon = roverPos.getLon();
-            dLat = Math.toDegrees(lat);
-            dLon = Math.toDegrees(lon);
 
-        }else {
             Solution[] currentSolutions = readSolutionBuffer();
             Solution currentSolution = currentSolutions[currentSolutions.length - 1];
             RtkCommon.Matrix3x3 cov = currentSolution.getQrMatrix();
@@ -320,7 +305,6 @@ public class RtkNaviService extends IntentService implements LocationListener {
             dLon = Math.toDegrees(lon);
             Qe = RtkCommon.covenu(lat, lon, cov).getValues();
             nbSat = currentSolution.getNs();
-        }
         height = roverPos.getHeight();
         String currentLine = String.format(Locale.ROOT,"%s,%s,%.6f,%.6f,%.3f,%d,%.3f,%.3f,%.1f\n", gpsTime.getStringGpsWeek(), gpsTime.getStringGpsTOW(), dLon, dLat, height, 10, 0D, 0D, 0D);
         try {
@@ -364,14 +348,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
         final RtkServerSettings settings;
 
         mbStarted = true;
-        try {
-            MainActivity.getDemoModeLocation().reset();
-            if (MainActivity.getDemoModeLocation().isInDemoMode()) {
-                MainActivity.getDemoModeLocation().startDemoMode();
-            }
-        } catch (NullPointerException e) {
-            // TODO Auto-generated catch block
-        }
+
         if (isServiceStarted()) return;
 
         settings = SettingsHelper.loadSettings(this);
@@ -394,14 +371,12 @@ public class RtkNaviService extends IntentService implements LocationListener {
                 Solution[] solutions = readSolutionBuffer();
 
                 if (solutions.length > 0) {
-                    Solution s = solutions[0];
+                    for (Solution s: solutions){
+                        Position3d pos = RtkCommon.ecef2pos(s.getPosition());
 
-                    Position3d pos = RtkCommon.ecef2pos(s.getPosition());
-
-                    ControlBridgeModule.sendToJS("latitude", Math.toDegrees(pos.getLat()));
-                    ControlBridgeModule.sendToJS("longitude", Math.toDegrees(pos.getLon()));
-
-
+                        ControlBridgeModule.sendToJS("latitude", Math.toDegrees(pos.getLat()));
+                        ControlBridgeModule.sendToJS("longitude", Math.toDegrees(pos.getLon()));
+                    }
                 }
 
          if (mBoolIsRunning) {
@@ -481,10 +456,6 @@ public class RtkNaviService extends IntentService implements LocationListener {
         mBoolIsRunning = false;
         mbStarted = false;
         try {
-            if (MainActivity.getDemoModeLocation().isInDemoMode())
-            {
-                MainActivity.getDemoModeLocation().stopDemoMode();
-            }
             if (mBoolMockLocationsPref)
             {
                 LocationManager lm = (LocationManager) getSystemService(

@@ -7,16 +7,13 @@ import {
   Button,
   NativeModules,
   NativeEventEmitter,
+  Switch,
 } from 'react-native';
 import NavigationMap from './NavigationMap';
 
-function Separator() {
-  return <View style={styles.separator} />;
-}
-
 const App: () => React$Node = () => {
-  const [status, setStatus] = useState('Stopped');
-  const [solution, setSolution] = useState('');
+  const [isRunning, setIsRunning] = useState(false);
+  const [showPaths, setShowPaths] = useState(false);
   const [curPos, setCurPos] = useState({
     latitude: 37.420814,
     longitude: -122.081949,
@@ -41,52 +38,50 @@ const App: () => React$Node = () => {
     };
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setCurPos({...curPos, longitude: curPos.longitude + 0.01});
-    }, 3000);
-  }, [curPos]);
+  const toggleRunning = () => setIsRunning(previousState => !previousState);
+  const togglePaths = () => setShowPaths(previousState => !previousState);
   return (
     <>
       <SafeAreaView style={styles.container}>
         <View style={styles.mapContainer}>
           <NavigationMap curPos={curPos} prevPos={prevPos.current} />
         </View>
-        <View>
-          <Button
-            onPress={() => {
-              NativeModules.ControlBridge.start();
-              setStatus('Started');
-            }}
-            title="Start"
-            accessibilityLabel="Start RTK Service"
-          />
-        </View>
-        <Separator />
-        <View>
-          <Button
-            onPress={() => {
-              NativeModules.ControlBridge.stop();
-              setStatus('Stopped');
-              setSolution('');
-            }}
-            title="Stop"
-            accessibilityLabel="Stop RTK Service"
-          />
-        </View>
-        <Separator />
-        <View>
-          <Button
-            onPress={() => NativeModules.ActivityStarter.navigateToExample()}
-            title="Open Legacy App"
-            accessibilityLabel="Open legacy app interface"
-          />
-        </View>
-        <Separator />
-        <View>
-          <Text>
-            {status} {solution} {JSON.stringify(curPos)}
-          </Text>
+        <View style={styles.lowerBox}>
+          <View style={styles.subBox}>
+            <View style={styles.subBoxElement}>
+              <View style={{flexDirection: 'row'}}>
+                <Text>Running</Text>
+                <Switch onValueChange={toggleRunning} value={isRunning} />
+              </View>
+            </View>
+            <View style={styles.subBoxElement}>
+              <View style={{flexDirection: 'row'}}>
+                <Text>Display paths</Text>
+                <Switch onValueChange={togglePaths} value={showPaths} />
+              </View>
+            </View>
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.subBox}>
+            <Button
+              style={styles.subBoxElement}
+              onPress={() => NativeModules.ActivityStarter.navigateToExample()}
+              title="Load path"
+              accessibilityLabel="Load path to display"
+            />
+            <Button
+              style={styles.subBoxElement}
+              onPress={() => NativeModules.ActivityStarter.navigateToExample()}
+              title="Export path"
+              accessibilityLabel="Open settings"
+            />
+            <Button
+              style={styles.subBoxElement}
+              onPress={() => NativeModules.ActivityStarter.navigateToExample()}
+              title="Settings"
+              accessibilityLabel="Open settings"
+            />
+          </View>
         </View>
       </SafeAreaView>
     </>
@@ -94,27 +89,33 @@ const App: () => React$Node = () => {
 };
 
 const styles = StyleSheet.create({
+  separator: {
+    marginHorizontal: 8,
+    borderLeftColor: '#737373',
+    borderLeftWidth: StyleSheet.hairlineWidth,
+  },
+  subBoxElement: {
+    flex: 0.5,
+  },
+  subBox: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  lowerBox: {
+    flex: 0.25,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+  },
   container: {
     flex: 1,
     marginHorizontal: 16,
   },
   mapContainer: {
-    height: 500,
+    flex: 0.7,
     marginTop: 20,
     marginBottom: 20,
-  },
-  title: {
-    textAlign: 'center',
-    marginVertical: 8,
-  },
-  fixToText: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   map: {
     ...StyleSheet.absoluteFillObject,

@@ -12,16 +12,12 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import gpsplus.rtkgps.BuildConfig;
-import gpsplus.rtkgps.DemoModeLocation;
-import gpsplus.rtkgps.MainActivity;
 import gpsplus.rtkgps.Proj4Converter;
 import gpsplus.rtkgps.R;
-import gpsplus.rtkgps.RtkNaviService;
 import gpsplus.rtkgps.settings.SolutionOutputSettingsFragment;
 import gpsplus.rtkgps.utils.UTM;
 import gpsplus.rtklib.RtkCommon;
 import gpsplus.rtklib.RtkCommon.Deg2Dms;
-import gpsplus.rtklib.RtkCommon.Matrix3x3;
 import gpsplus.rtklib.RtkCommon.Position3d;
 import gpsplus.rtklib.RtkControlResult;
 import gpsplus.rtklib.Solution;
@@ -177,7 +173,6 @@ public class SolutionView extends TableLayout {
     private Proj4Converter proj4Converter = null;
     private GeoidModel model;
     public RtkCommon rtkCommon;
-    private DemoModeLocation mDemoModeLocation;
 
     public SolutionView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -238,17 +233,10 @@ public class SolutionView extends TableLayout {
             mTextViewAge.setTextColor(textColor);
         }
 
-        mDemoModeLocation = MainActivity.getDemoModeLocation();
 
-        if (mDemoModeLocation.isInDemoMode()) {
-            mSolutionFormat = Format.WGS84;
-            updateCoordinatesHeader();
-            setStats(new RtkControlResult());
-        }else {
             updateCoordinatesHeader();
             clearCoordinates();
             setStats(new RtkControlResult());
-        }
     }
 
     @Override
@@ -264,13 +252,9 @@ public class SolutionView extends TableLayout {
         final Solution sol = status.getSolution();
         int resId = 0;
         SolutionStatus solStatus = SolutionStatus.NONE;
-        if (mDemoModeLocation.isInDemoMode() && RtkNaviService.mbStarted) {
-            resId = SolutionStatus.INTERNAL.getNameResId();
-            solStatus = SolutionStatus.INTERNAL;
-        }else{
+
             resId = sol.getSolutionStatus().getNameResId();
             solStatus = sol.getSolutionStatus();
-        }
         mTextViewSolutionStatus.setText(resId);
         mSolutionIndicatorView.setStatus(solStatus);
         updateCoordinates(status);
@@ -326,22 +310,7 @@ public class SolutionView extends TableLayout {
 
 
         double lat,lon,height;
-        if (mDemoModeLocation.isInDemoMode() && RtkNaviService.mbStarted) {
-            roverPos = mDemoModeLocation.getPosition();
-            if (roverPos == null){
-                return;
-            }
-            lat = roverPos.getLat();
-            lon=roverPos.getLon();
-            height=roverPos.getHeight();
-            Qe = new double[9];
-            Qe[4] = mDemoModeLocation.getNAccuracy();
-            Qe[0] = mDemoModeLocation.getEAccuracy();
-            Qe[8] = mDemoModeLocation.getVAccuracy();
-            double[] covD = {0,0,0,0,0,0,0,0,0} ;
-            cov = new Matrix3x3(covD);
-            RtkCommon.pos2ecef(lat, lon, height, roverEcefPos);
-        }else {
+
             roverEcefPos = sol.getPosition();
             if (RtkCommon.norm(roverEcefPos.getValues()) <= 0.0) {
                 return;
@@ -352,7 +321,6 @@ public class SolutionView extends TableLayout {
             lon=roverPos.getLon();
             height=roverPos.getHeight();
             Qe = RtkCommon.covenu(lat, lon, cov).getValues();
-        }
         double dlat = Math.toDegrees(lat);
         double dlon = Math.toDegrees(lon);
         ProjCoordinate proj4Coordinate;
@@ -551,17 +519,7 @@ public class SolutionView extends TableLayout {
 
     private void updateAgeText(Solution sol) {
         String format = getResources().getString(R.string.solution_view_age_text_format);
-        if (mDemoModeLocation.isInDemoMode() && RtkNaviService.mbStarted) {
 
-            mTextViewAge.setText(String.format(
-                    Locale.US,
-                    format,
-                    mDemoModeLocation.getAge(),
-                    0.0,
-                    mDemoModeLocation.getNbSat()
-                    ));
-
-        }else{
 
             mTextViewAge.setText(String.format(
                     Locale.US,
@@ -570,7 +528,6 @@ public class SolutionView extends TableLayout {
                     sol.getRatio(),
                     sol.getNs()
                     ));
-        }
 
     }
 

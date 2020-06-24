@@ -347,7 +347,7 @@ public class StatusFragment extends Fragment {
 
         if (ma == null) return;
 
-        rtks = ma.getRtkService();
+        rtks = null;
         if (rtks == null) {
             serverStatus = RtkServerStreamStatus.STATE_CLOSE;
             // mRoverObservationStatus.clear();
