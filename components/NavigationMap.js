@@ -1,9 +1,15 @@
 import React, {useEffect, useRef} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, {Polyline} from 'react-native-maps';
 import carImage from '../assets/car.png';
 
-const NavigationMap: () => React$Node = ({prevPos, curPos}) => {
+const NavigationMap: () => React$Node = ({
+  prevPos,
+  curPos,
+  loadedPath,
+  drivenPath,
+  isPathsVisible,
+}) => {
   const mapEl = useRef(null);
   useEffect(() => {
     updateMap();
@@ -44,6 +50,28 @@ const NavigationMap: () => React$Node = ({prevPos, curPos}) => {
           anchor={{x: 0.5, y: 0.5}}
           image={carImage}
         />
+        {isPathsVisible && (
+          <>
+            <Polyline
+              coordinates={loadedPath}
+              strokeColor="#001eb2"
+              strokeWidth={6}
+            />
+            <Polyline
+              coordinates={drivenPath}
+              strokeColor="#cd4746"
+              strokeColors={[
+                '#7F0000',
+                '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+                '#B24112',
+                '#E5845C',
+                '#238C23',
+                '#7F0000',
+              ]}
+              strokeWidth={6}
+            />
+          </>
+        )}
       </MapView>
       <View style={styles.bottomRightOfMap}>
         <Text>

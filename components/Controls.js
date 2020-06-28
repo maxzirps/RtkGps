@@ -8,9 +8,8 @@ import {
   Switch,
 } from 'react-native';
 
-const Controls: () => React$Node = () => {
+const Controls: () => React$Node = ({isPathsVisible, setIsPathsVisible}) => {
   const [isRunning, setIsRunning] = useState(false);
-  const [showPaths, setShowPaths] = useState(false);
 
   const toggleRunning = () => {
     if (!isRunning) {
@@ -21,10 +20,7 @@ const Controls: () => React$Node = () => {
     setIsRunning(previousState => !previousState);
   };
   const togglePaths = () => {
-    if (!showPaths) {
-      // TODO: show paths
-    }
-    setShowPaths(previousState => !previousState);
+    setIsPathsVisible(previousState => !previousState);
   };
   return (
     <>
@@ -39,7 +35,7 @@ const Controls: () => React$Node = () => {
           <View style={styles.subBoxElement}>
             <View style={{flexDirection: 'row'}}>
               <Text>Display paths</Text>
-              <Switch onValueChange={togglePaths} value={showPaths} />
+              <Switch onValueChange={togglePaths} value={isPathsVisible} />
             </View>
           </View>
         </View>
@@ -56,12 +52,6 @@ const Controls: () => React$Node = () => {
             onPress={() => NativeModules.ActivityStarter.navigateToExample()}
             title="Clear paths"
             accessibilityLabel="Load path to display"
-          />
-          <Button
-            style={styles.subBoxElement}
-            onPress={() => NativeModules.ActivityStarter.navigateToExample()}
-            title="Export path"
-            accessibilityLabel="Open settings"
           />
           <Button
             style={styles.subBoxElement}

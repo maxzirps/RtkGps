@@ -10,6 +10,9 @@ import NavigationMap from './components/NavigationMap';
 import Controls from './components/Controls';
 
 const App: () => React$Node = () => {
+  const [drivenPath, setDrivenPath] = useState([]);
+  const [loadedPath, setLoadedPath] = useState([]);
+  const [isPathsVisible, setIsPathsVisible] = useState(true);
   const [curPos, setCurPos] = useState({
     latitude: 37.420814,
     longitude: -122.081949,
@@ -32,13 +35,31 @@ const App: () => React$Node = () => {
       eventEmitter.removeAllListeners('solution');
     };
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCurPos({...curPos, longitude: curPos.longitude + 0.01});
+    }, 3000);
+  }, [curPos]);
+
+  useEffect(() => setDrivenPath([...drivenPath, curPos]), [curPos]);
+
   return (
     <>
       <SafeAreaView style={styles.container}>
         <View style={styles.mapContainer}>
-          <NavigationMap curPos={curPos} prevPos={prevPos.current} />
+          <NavigationMap
+            curPos={curPos}
+            prevPos={prevPos.current}
+            loadedPath={[]}
+            drivenPath={drivenPath}
+            isPathsVisible={isPathsVisible}
+          />
         </View>
-        <Controls />
+        <Controls
+          isPathsVisible={isPathsVisible}
+          setIsPathsVisible={setIsPathsVisible}
+        />
       </SafeAreaView>
     </>
   );
