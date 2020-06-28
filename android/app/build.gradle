@@ -279,6 +279,8 @@ dependencies {
     implementation "com.facebook.react:react-native:0.62.2" // From node_modules
     implementation 'junit:junit:4.12'
     implementation project(':react-native-maps')
+    implementation project(':react-native-document-picker')
+    implementation project(':react-native-fs')
 }
 
 // Run this once to be able to run the application with BUCK

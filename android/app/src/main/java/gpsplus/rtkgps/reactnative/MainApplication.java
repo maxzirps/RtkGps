@@ -12,6 +12,7 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
+import com.rnfs.RNFSPackage;
 
 import org.gdal.gdal.gdal;
 import org.gdal.ogr.ogr;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import gpsplus.ntripcaster.NTRIPCaster;
 import gpsplus.rtkgps.BuildConfig;
+import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -31,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     public void onCreate() {
+/*
         if (DBG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectDiskReads()
@@ -45,21 +48,21 @@ public class MainApplication extends Application implements ReactApplication {
                     .penaltyDeath()
                     .build());
         }
+ */
         super.onCreate();
-        Log.d("AAAAAAAAA", "AAAAAAAAAAAAAAAa");
         //ACRA.init(this);
         System.loadLibrary("proj");
-        Log.v("Proj4","Proj4 version: "+PJ.getVersion());
+        Log.v("Proj4", "Proj4 version: " + PJ.getVersion());
 
         System.loadLibrary("ntripcaster");
-        Log.v("ntripcaster","NTRIP Caster "+NTRIPCaster.getVersion());
+        Log.v("ntripcaster", "NTRIP Caster " + NTRIPCaster.getVersion());
 
         System.loadLibrary("rtkgps");
 
         //System.loadLibrary("gdalalljni"); //Automaticaly done
         ogr.RegisterAll();
         gdal.AllRegister();
-        Log.v("GDAL",gdal.VersionInfo("--version"));
+        Log.v("GDAL", gdal.VersionInfo("--version"));
         //set version
         PackageInfo pi;
         try {
@@ -90,7 +93,9 @@ public class MainApplication extends Application implements ReactApplication {
                     new MainReactPackage(),
                     new ActivityStarterPackage(),
                     new ControlBridgePackage(),
-                    new MapsPackage());
+                    new MapsPackage(),
+                    new DocumentPickerPackage(),
+                    new RNFSPackage());
         }
 
         @Override

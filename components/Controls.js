@@ -8,7 +8,12 @@ import {
   Switch,
 } from 'react-native';
 
-const Controls: () => React$Node = ({isPathsVisible, setIsPathsVisible}) => {
+const Controls: () => React$Node = ({
+  isPathsVisible,
+  setIsPathsVisible,
+  clearPaths,
+  loadPath,
+}) => {
   const [isRunning, setIsRunning] = useState(false);
 
   const toggleRunning = () => {
@@ -43,13 +48,13 @@ const Controls: () => React$Node = ({isPathsVisible, setIsPathsVisible}) => {
         <View style={styles.subBox}>
           <Button
             style={styles.subBoxElement}
-            onPress={() => NativeModules.ActivityStarter.navigateToExample()}
+            onPress={() => loadPath()}
             title="Load path"
             accessibilityLabel="Load path to display"
           />
           <Button
             style={styles.subBoxElement}
-            onPress={() => NativeModules.ActivityStarter.navigateToExample()}
+            onPress={() => clearPaths()}
             title="Clear paths"
             accessibilityLabel="Load path to display"
           />

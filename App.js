@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import NavigationMap from './components/NavigationMap';
 import Controls from './components/Controls';
+import loadPath from './util/loadPath';
 
 const App: () => React$Node = () => {
   const [drivenPath, setDrivenPath] = useState([]);
@@ -36,13 +37,17 @@ const App: () => React$Node = () => {
     };
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setCurPos({...curPos, longitude: curPos.longitude + 0.01});
-    }, 3000);
-  }, [curPos]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setCurPos({...curPos, longitude: curPos.longitude + 0.01});
+  //   }, 3000);
+  // }, [curPos]);
 
   useEffect(() => setDrivenPath([...drivenPath, curPos]), [curPos]);
+
+  const onLoadPathClicked = () => {
+    loadPath().then(path => setLoadedPath(path));
+  };
 
   return (
     <>
@@ -51,13 +56,18 @@ const App: () => React$Node = () => {
           <NavigationMap
             curPos={curPos}
             prevPos={prevPos.current}
-            loadedPath={[]}
+            loadedPath={loadedPath}
             drivenPath={drivenPath}
             isPathsVisible={isPathsVisible}
           />
         </View>
         <Controls
           isPathsVisible={isPathsVisible}
+          clearPaths={() => {
+            setDrivenPath([]);
+            setLoadedPath([]);
+          }}
+          loadPath={onLoadPathClicked}
           setIsPathsVisible={setIsPathsVisible}
         />
       </SafeAreaView>
