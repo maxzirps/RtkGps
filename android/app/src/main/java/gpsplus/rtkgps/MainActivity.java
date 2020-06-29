@@ -100,6 +100,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /*
         MultiplePermissionsListener dialogMultiplePermissionsListener =
                 DialogOnAnyDeniedMultiplePermissionsListener.Builder
                         .withContext(this)
@@ -121,7 +122,7 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ).withListener(dialogMultiplePermissionsListener)
                 .check();
-
+*/
         PackageManager m = getPackageManager();
         String s = getPackageName();
         try {
@@ -188,11 +189,11 @@ public class MainActivity extends Activity implements OnSharedPreferenceChangeLi
                 invalidateOptionsMenu();
             }
         });
-
+/*
         ChangeLog cl = new ChangeLog(this);
         if (cl.firstRun())
             cl.getLogDialog().show();
-
+*/
 
     }
 

@@ -9,6 +9,7 @@ import {
 import NavigationMap from './components/NavigationMap';
 import Controls from './components/Controls';
 import loadPath from './util/loadPath';
+import requestAllPermission from './util/requestAllPermissions';
 
 const initialPosition = {latitude: 37.420814, longitude: -122.081949};
 
@@ -22,6 +23,11 @@ const App: () => React$Node = () => {
   useEffect(() => {
     prevPos.current = curPos;
   });
+
+  useEffect(() => {
+    requestAllPermission();
+  }, []);
+
   useEffect(() => {
     // Add an event listener to receive the position calculated by RtkGps
     const eventEmitter = new NativeEventEmitter(NativeModules.ControlBridge);

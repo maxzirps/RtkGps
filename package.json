@@ -3,12 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "cd android && ./gradlew :app:installDebug --daemon && adb shell am start -n 'gpsplus.rtkgps/gpsplus.rtkgps.reactnative.MainActivity2' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER",
+    "android": "cd android && ./gradlew :app:installDebug --daemon && adb shell am start -n 'gpsplus.rtkgps/gpsplus.rtkgps.reactnative.MainActivity' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "adb-reverse": "adb reverse tcp:8081 tcp:8081"
+    "adb-reverse": "adb reverse tcp:8081 tcp:8081",
+    "build": "cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
     "react": "16.11.0",

@@ -60,7 +60,7 @@ const Controls: () => React$Node = ({
           />
           <Button
             style={styles.subBoxElement}
-            onPress={() => NativeModules.ActivityStarter.navigateToExample()}
+            onPress={() => NativeModules.ActivityStarter.openSettings()}
             title="Settings"
             accessibilityLabel="Open settings"
           />

@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -41,7 +42,6 @@ public class ControlBridgeModule extends ReactContextBaseJavaModule {
     public void start() {
         final Intent rtkServiceIntent = new Intent(RtkNaviService.ACTION_START);
         rtkServiceIntent.setClass(reactContext, RtkNaviService.class);
-
         reactContext.startService(rtkServiceIntent);
 
     }
