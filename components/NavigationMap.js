@@ -38,9 +38,9 @@ const NavigationMap: () => React$Node = ({
       <MapView
         ref={mapEl}
         style={styles.flex}
-        minZoomLevel={15}
         initialRegion={{
-          ...curPos,
+          latitude: 37.420814,
+          longitude: -122.081949,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
           curAng: 45,

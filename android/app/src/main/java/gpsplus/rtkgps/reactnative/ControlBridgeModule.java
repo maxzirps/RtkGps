@@ -13,6 +13,9 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import gpsplus.rtkgps.RtkNaviService;
 
 
@@ -50,9 +53,19 @@ public class ControlBridgeModule extends ReactContextBaseJavaModule {
         reactContext.startService(intent);
     }
 
-    public static void sendToJS(String propertyName, Double value) {
+    public static void sendToJS(Double latitutde, Double longitude) {
         WritableMap params = Arguments.createMap();
-        params.putDouble(propertyName, value);
+        JSONObject json = new JSONObject();
+        try {
+            json
+                    .put("latitude", latitutde)
+                    .put("longitude", longitude)
+                    .toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        params.putString("solution", json.toString());
 
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("solution", params);

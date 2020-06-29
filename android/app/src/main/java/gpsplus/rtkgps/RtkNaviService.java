@@ -361,9 +361,7 @@ public class RtkNaviService extends IntentService implements LocationListener {
                 if (solutions.length > 0) {
                     for (Solution s: solutions){
                         Position3d pos = RtkCommon.ecef2pos(s.getPosition());
-
-                        ControlBridgeModule.sendToJS("latitude", Math.toDegrees(pos.getLat()));
-                        ControlBridgeModule.sendToJS("longitude", Math.toDegrees(pos.getLon()));
+                        ControlBridgeModule.sendToJS(Math.toDegrees(pos.getLat()), Math.toDegrees(pos.getLon()));
                     }
                 }
 

@@ -9,15 +9,15 @@ import {
 import NavigationMap from './components/NavigationMap';
 import Controls from './components/Controls';
 import loadPath from './util/loadPath';
+import writePathToFile from './util/writePath';
+
+const initialPosition = {latitude: 37.420814, longitude: -122.081949};
 
 const App: () => React$Node = () => {
   const [drivenPath, setDrivenPath] = useState([]);
   const [loadedPath, setLoadedPath] = useState([]);
   const [isPathsVisible, setIsPathsVisible] = useState(true);
-  const [curPos, setCurPos] = useState({
-    latitude: 37.420814,
-    longitude: -122.081949,
-  });
+  const [curPos, setCurPos] = useState(initialPosition);
   const prevPos = useRef();
   useEffect(() => {
     prevPos.current = curPos;
@@ -25,11 +25,11 @@ const App: () => React$Node = () => {
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.ToastExample);
     eventEmitter.addListener('solution', event => {
-      if (event.latitude) {
-        setCurPos({...curPos, latitude: event.latitude});
-      }
-      if (event.longitude) {
-        setCurPos({...curPos, longitude: event.longitude});
+      try {
+        const pos = JSON.parse(event.solution);
+        setCurPos(pos);
+      } catch (e) {
+        console.error(e);
       }
     });
     return () => {
@@ -37,16 +37,21 @@ const App: () => React$Node = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setCurPos({...curPos, longitude: curPos.longitude + 0.01});
-  //   }, 3000);
-  // }, [curPos]);
-
-  useEffect(() => setDrivenPath([...drivenPath, curPos]), [curPos]);
+  useEffect(() => {
+    if (drivenPath[0] === initialPosition) {
+      // remove initialPosition from driven path
+      setDrivenPath([...drivenPath.slice(1), curPos]);
+    } else {
+      setDrivenPath([...drivenPath, curPos]);
+    }
+  }, [curPos]);
 
   const onLoadPathClicked = () => {
     loadPath().then(path => setLoadedPath(path));
+  };
+
+  const writePath = () => {
+    writePathToFile(drivenPath);
   };
 
   return (
@@ -67,6 +72,7 @@ const App: () => React$Node = () => {
             setDrivenPath([]);
             setLoadedPath([]);
           }}
+          writePath={writePath}
           loadPath={onLoadPathClicked}
           setIsPathsVisible={setIsPathsVisible}
         />
