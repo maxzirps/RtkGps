@@ -3,6 +3,9 @@ import {View, StyleSheet, Text} from 'react-native';
 import MapView, {Polyline} from 'react-native-maps';
 import carImage from '../assets/car.png';
 
+/**
+ * https://github.com/react-native-community/react-native-maps/blob/master/example/examples/AnimatedNavigation.js
+ */
 const NavigationMap: () => React$Node = ({
   prevPos,
   curPos,
@@ -45,12 +48,14 @@ const NavigationMap: () => React$Node = ({
           longitudeDelta: 0.0421,
           curAng: 45,
         }}>
+        {/* Display car icon */}
         <MapView.Marker
           coordinate={curPos}
           anchor={{x: 0.5, y: 0.5}}
           image={carImage}
         />
         {isPathsVisible && (
+          // Display paths
           <>
             <Polyline
               coordinates={loadedPath}
@@ -66,6 +71,7 @@ const NavigationMap: () => React$Node = ({
         )}
       </MapView>
       <View style={styles.bottomRightOfMap}>
+        {/* Display position on right bottom of map */}
         <Text>
           {(curPos.latitude + '').substr(0, 7)} |{' '}
           {(curPos.longitude + '').substr(0, 7)}

@@ -3,10 +3,12 @@ const RNFS = require('react-native-fs');
 
 const loadPath = async () => {
   try {
+    // Open a document picker to select the file to load
     const res = await DocumentPicker.pick({
       type: [DocumentPicker.types.allFiles],
     });
 
+    // Load the file content
     let fileContent = await RNFS.readFile(res.uri, 'utf8');
     let path;
     try {
@@ -17,6 +19,7 @@ const loadPath = async () => {
       return [];
     }
 
+    // Small validation of loaded content
     if (Array.isArray(path)) {
       let isValidPath = true;
       path.forEach(coordinates => {

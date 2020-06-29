@@ -13,7 +13,6 @@ const Controls: () => React$Node = ({
   setIsPathsVisible,
   clearPaths,
   loadPath,
-  writePath,
 }) => {
   const [isRunning, setIsRunning] = useState(false);
 
@@ -21,7 +20,6 @@ const Controls: () => React$Node = ({
     if (!isRunning) {
       NativeModules.ControlBridge.start();
     } else {
-      writePath();
       NativeModules.ControlBridge.stop();
     }
     setIsRunning(previousState => !previousState);

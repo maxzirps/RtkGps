@@ -9,7 +9,6 @@ import {
 import NavigationMap from './components/NavigationMap';
 import Controls from './components/Controls';
 import loadPath from './util/loadPath';
-import writePathToFile from './util/writePath';
 
 const initialPosition = {latitude: 37.420814, longitude: -122.081949};
 
@@ -18,12 +17,14 @@ const App: () => React$Node = () => {
   const [loadedPath, setLoadedPath] = useState([]);
   const [isPathsVisible, setIsPathsVisible] = useState(true);
   const [curPos, setCurPos] = useState(initialPosition);
+  // Store previous position; this is needed for NavigationMap
   const prevPos = useRef();
   useEffect(() => {
     prevPos.current = curPos;
   });
   useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(NativeModules.ToastExample);
+    // Add an event listener to receive the position calculated by RtkGps
+    const eventEmitter = new NativeEventEmitter(NativeModules.ControlBridge);
     eventEmitter.addListener('solution', event => {
       try {
         const pos = JSON.parse(event.solution);
@@ -33,11 +34,13 @@ const App: () => React$Node = () => {
       }
     });
     return () => {
+      // Remove the event listener on close
       eventEmitter.removeAllListeners('solution');
     };
   }, []);
 
   useEffect(() => {
+    // Add the new position to our drivenPath array
     if (drivenPath[0] === initialPosition) {
       // remove initialPosition from driven path
       setDrivenPath([...drivenPath.slice(1), curPos]);
@@ -47,11 +50,8 @@ const App: () => React$Node = () => {
   }, [curPos]);
 
   const onLoadPathClicked = () => {
+    // Load path button was clicked, load path from file
     loadPath().then(path => setLoadedPath(path));
-  };
-
-  const writePath = () => {
-    writePathToFile(drivenPath);
   };
 
   return (
@@ -72,7 +72,6 @@ const App: () => React$Node = () => {
             setDrivenPath([]);
             setLoadedPath([]);
           }}
-          writePath={writePath}
           loadPath={onLoadPathClicked}
           setIsPathsVisible={setIsPathsVisible}
         />
