@@ -5,7 +5,7 @@ Adding a react-native GUI on [RtkGps](https://github.com/eltorio/RtkGps)
 ## Setup
 
 1. [Set up your local developer environment for react-native](https://reactnative.dev/docs/environment-setup)
-2. `git submodule init`
+2. `git submodule init && git submodule update`
 3. `yarn install`
 4. Open the Android sdk manager and install
 * NDK
